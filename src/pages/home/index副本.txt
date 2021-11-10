@@ -1,0 +1,166 @@
+import { black } from 'chalk';
+import React, { Component } from 'react';
+import { View,Text,Image,StatusBar,
+        TextInput,ScrollableTabView,StyleSheet,TouchableOpacity,ScrollView,FlatList
+    } from 'react-native';
+import { pxToDp } from '../../utils/pxToDp';
+import TabBar from './TabNavigation'
+
+// import request from "../request"
+// import { BASE_URI,RECOMMENT_TYPE,RECOMMENT_HOME,JUMPTO_XQ } from '../pathMap';
+import axios from 'axios';
+
+export default class TuiJianQzn extends Component {
+    constructor(props) {
+        super(props);
+        // this.setState({tablist:[{id:1,name:"热门"},{id:2,name:"高赞"}]});
+        this.state = {
+            index: '-1',
+            //列表数组
+            tablist:[],
+            params:{
+                pageNum:2,
+                type:1,
+            },
+            //推荐数组
+            recomments:[],
+        };
+    }
+
+    componentDidMount(){
+        this.getRecommentTab();
+        this.getRecomment();
+    }
+
+    //获取推荐导航栏
+    getRecommentTab= async ()=>{
+        const res=""; 
+        // const res=await request.get(RECOMMENT_TYPE);
+        axios.get("http://49.233.252.20:8085/user/content/typeShow").then(res=>{
+            // console.log(res.data.data)
+            this.setState({ tablist:res.data.data})
+        })
+        
+        
+    }
+    //获取推荐首页
+    getRecomment= async ()=>{
+        axios.post("http://49.233.252.20:8085/user/content/push",this.state.params).then(res=>{
+            // console.log(res.data.data) 
+            this.setState({ recomments:res.data.data})
+        })
+        // const res=await request.post(RECOMMENT_HOME,this.state.params);
+        // console.log(res.data.data) 
+        
+    }
+    //滚顶条触底事件
+    onEndReached=()=>{
+        console.log(onEndReached) 
+    }
+    render() {
+        const  {navigation} = this.props
+        const {recomments} = this.state
+        return(
+            <>
+                <FlatList
+                    onEndReached={this.onEndReached}
+                    onEndReachedThreshold={0.1}
+                />
+                    <View>
+                    {/* 状态栏  */}
+                        <StatusBar backgroundColor="#FFFEFE" barStyle={"dark-content"} translucent={true}/>
+                    {/* 搜索 */}
+                        <TouchableOpacity onPress={()=>{
+                            navigation.navigate('Search')}}>
+                        <View style={{backgroundColor:"#FFFEFE"}}>
+                            <View style={styles.searchInput}>
+                                <Text style={styles.searchTxt} >访英雄足迹</Text>
+                                <Image style={styles.search} source={require('../../static/img/search.png')} />
+                                {/* onChangeText={handleChangeText} */}
+                            </View>
+                        </View>
+                        </TouchableOpacity>
+                    {/* 个人中心 */}
+                                <View>
+                                    <Image style={styles.logo} source={require('../../static/img/personalCenter.png')} />
+                                </View>
+                    {/* 顶部导航栏 */}
+                        <TabBar ref={e => this.tabs = e}
+                        index={this.state.index}
+                        data={this.state.tablist}
+                        onChange={index => {}} />
+
+
+                        <ScrollView>
+                        <View >
+                            {recomments.map((v,i)=>
+
+                                    <View key={i} style={{height:pxToDp(362),backgroundColor:"#FFFFFF",marginTop:pxToDp(34),borderRadius:10}}>
+                                <TouchableOpacity onPress={()=>{
+                                    navigation.navigate('Details',{id:this.state.recomments[i].id})}} 
+                                >
+                                        <Text style={{fontSize:pxToDp(32),marginLeft:pxToDp(30),marginTop:pxToDp(32)}}>{v.articleTitle}</Text>
+                                        <Image style={{width:pxToDp(286),height:pxToDp(191),marginLeft:pxToDp(34),marginTop:pxToDp(34)}} source={{uri:v.url}} />
+                                        <Text numberOfLines={6} ellipsizeMode="tail" style={{fontSize:pxToDp(28),marginTop:pxToDp(-232),marginLeft:pxToDp(356),marginRight:pxToDp(32)}}>        {v.articleIntroduce} </Text>
+                                        <View  style={{flexDirection:"row", position: 'absolute',}}>
+                                        
+                                            <View>
+                                                <Image style={{width:pxToDp(24),height:pxToDp(24),marginLeft:pxToDp(58),marginTop:pxToDp(320)}} source={require('../../static/img/dingWei.png')} />
+                                                <Text style={{fontSize:pxToDp(20),marginLeft:pxToDp(92),marginTop:pxToDp(-24)}}>{v.articleLocation}</Text>
+                                            </View>
+                                            <View style={{flexDirection:"row"}}>
+                                                <Text style={{fontSize:pxToDp(20),marginLeft:pxToDp(58),marginTop:pxToDp(320),marginLeft:pxToDp(400)}}>{v.views}浏览</Text>
+                                                <Text style={{fontSize:pxToDp(20),marginTop:pxToDp(320),marginLeft:pxToDp(10)}}>{v.commentNum}评论</Text>
+                                            </View>
+                                        </View>
+                                        </TouchableOpacity>
+                                    </View>
+                                )} 
+                            
+                        </View>
+                        </ScrollView>
+                    
+                    </View>
+            </>
+        );
+    }
+}
+
+const styles = StyleSheet.create ({
+    logo:{
+        marginTop:pxToDp(-60),
+        marginLeft:pxToDp(660),
+        // marginRight:pxToDp(50),
+    },
+    search:{
+        marginTop:pxToDp(-36),
+        marginLeft:pxToDp(372),
+    },
+    searchInput:{
+        borderRadius:15,
+        borderTopWidth: 1,
+        borderRightWidth: 1,
+        borderBottomWidth: 1,
+        borderLeftWidth: 1,
+        borderStyle: "solid",
+        borderLeftColor: "#F2E4E5",
+        borderRightColor: "#F2E4E5",
+        borderTopColor: "#F2E4E5",
+        borderBottomColor: "#F2E4E5",
+        borderColor: "#F2E4E5",
+        backgroundColor:"#F2E4E5",
+        width:pxToDp(472),
+        height:pxToDp(80),
+        marginTop:pxToDp(62),
+        // marginBottom:pxToDp(25),
+        // paddingBottom:pxToDp(15),
+        marginLeft:pxToDp(140),
+        borderRadius:10
+    },
+    searchTxt:{
+        fontSize:pxToDp(28),
+        marginTop:pxToDp(22),
+        marginLeft:pxToDp(70)
+    },
+});
+

@@ -13,11 +13,12 @@ import axios from 'axios';
 export default class TuiJianQzn extends Component {
     constructor(props) {
         super(props);
+        console.log(this.props)
         // this.setState({tablist:[{id:1,name:"热门"},{id:2,name:"高赞"}]});
         this.state = {
             index: '-1',
             //列表数组
-            tablist:[],
+            tablist:['热门',"高赞"],
             params:{
                 pageNum:1,
                 type:1,
@@ -73,24 +74,27 @@ export default class TuiJianQzn extends Component {
                     <View style={{position:"absolute",width:"100%",height:"8%",top:0,left:0}}>
                     {/* 状态栏  */}
                         <StatusBar backgroundColor="#FFFEFE" barStyle={"dark-content"} translucent={true}/>
-                    {/* 搜索 */}
-                        <TouchableOpacity onPress={()=>{
-                            navigation.navigate('Search')}}>
+                 
+                    <View style={styles.topBar_flex}>
+                     {/* 搜索 */}
+                     {/* <TouchableOpacity onPress={()=>{
+                            navigation.navigate('Search')}}> */}
                         <View style={{backgroundColor:"#FFFEFE",}}> 
                             <View style={styles.searchInput}>
                                 <Text style={styles.searchTxt} >访英雄足迹</Text>
-                                <Image style={styles.searchImg} source={require('../../static/img/search.png')} />
+                                <Image style={styles.searchImg} source={require('../../static/img/search.png')} /> 
                                 {/* onChangeText={handleChangeText} */}
                             </View>
                         </View>
-                        </TouchableOpacity>
-                    {/* 个人中心 */}
-                        {/* <TouchableOpacity onPress={()=>{
-                         this.props.navigation.navigate('Detail');}}> */}
-                                <View>
-                                    <Image style={styles.logo} source={require('../../static/img/personalCenter.png')} />
+                        {/* </TouchableOpacity> */}
+                        {/* 个人中心 */}
+                                <View style={styles.logo} >
+                                    <TouchableOpacity onPress={()=>{navigation.navigate('Pone');}}>
+                                            <Image source={require('../../static/img/personalCenter.png')} />
+                                    </TouchableOpacity>
                                 </View>
-                    {/* </TouchableOpacity> */}
+                    </View>
+                    
                     {/* 顶部导航栏 */}
                         <TabBar ref={e => this.tabs = e}
                         index={this.state.index}
@@ -139,9 +143,16 @@ export default class TuiJianQzn extends Component {
 }
 
 const styles = StyleSheet.create ({
+topBar_flex:{
+    height:pxToDp(140),
+    display:'flex',
+},
     logo:{
-        marginTop:pxToDp(-60),
-        marginLeft:pxToDp(660),
+        // position:'absolute',
+        marginTop:pxToDp(-64),
+        marginLeft:pxToDp(655),
+        zIndex:100,
+        // transform:[{scale:1}]
         // marginRight:pxToDp(50),
     },
     searchImg:{

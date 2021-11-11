@@ -10,6 +10,7 @@ import {
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {pxToDp} from '../utils/pxToDp';
 import RootStore from '../mobx/index';
+import LocalStorageUtils from '../utils/LocalStorageUtils';
 
 import Home from '../pages/home';
 import DynamicList from '../pages/dynamic';
@@ -17,7 +18,7 @@ import Demand from '../pages/demand';
 import Message from '../pages/message';
 import personal from '../pages/personal';
 // 登录
-import Login from '../pages/user/login';
+import Logintwo from '../pages/user/logintwo';
 // 旅游模式
 import Maintourytm from '../pages/tour/Maintourytm'
 
@@ -187,6 +188,18 @@ class Tabs extends Component {
   }
 
   componentDidMount() {
+
+    LocalStorageUtils.get('userInfo').then((userInfo) => {
+      if (userInfo !== null) {
+        // 1.重新获取用户信息
+        // 2.存储到mobx中
+      } else {
+        // 跳转登录
+        // this.props.navigate()
+        console.log(this.props.navigation)
+        this.props.navigation.navigate('Logintwo')
+      }
+    });
     //监听键盘弹出事件
     this.keyboardDidShowListener = Keyboard.addListener(
       'keyboardWillShow',
@@ -233,7 +246,7 @@ class Tabs extends Component {
           {/* 推荐页面 */}
         <Tab.Screen name="首页" component={Home} />
         {/* 播放 */}
-        <Tab.Screen name="需要" component={Login} />
+        <Tab.Screen name="需要" component={Home} />
         {/* 旅游页面 */}
         <Tab.Screen name="动态" component={Maintourytm} />
 

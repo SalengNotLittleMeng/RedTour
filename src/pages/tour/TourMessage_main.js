@@ -16,6 +16,7 @@ export default class TourMessage_main extends Component {
         location: "太原市阳曲县华强中路1号",
         name: "太原方特东方神话",
         score: 4.7,
+        unOnline:true
         }
     };
     }
@@ -25,8 +26,9 @@ export default class TourMessage_main extends Component {
         }
     } 
     render(){
-        console.log(this.state.msg.imges)
-        let DOM = this.state.msg.imges.map((item, index) => (<Image source={{uri:item+""}} style={styles.bannerStyle}/>))
+        console.log(this.state.msg)
+        let DOM =this.state.msg.unOnline? this.state.msg.imges.map((item, index) =>(<Image source={item} style={styles.bannerStyle}/>) )
+                                        :this.state.msg.imges.map((item, index) =>(<Image source={{uri:item+""}} style={styles.bannerStyle}/>) )
     return (
         <View style={styles.body}>
             <View style={{position:'relative', height:200}}>

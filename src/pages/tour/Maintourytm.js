@@ -6,16 +6,13 @@ import {
     PanResponder,
     TouchableOpacity,
     Image,
+    TouchableWithoutFeedback,
     SafeAreaView,
     ScrollView,
     StatusBar,
     StyleSheet,
     Text,
-    useColorScheme,
-    TextInput,
     View,
-    Button,
-    ImageBackground
 } from 'react-native';
 import axios from 'axios';
 export default class Maintourytm extends Component {
@@ -143,11 +140,11 @@ render(){
      let DOM = this.state.msg.map((item, index) => 
             <Text key={index} style={[styles.textmain]}>{item.description}</Text>)
       let cover = this.state.msg.map((item, index) => 
-            <TouchableOpacity {...this.pan.panHandlers}
+            <TouchableWithoutFeedback {...this.pan.panHandlers}
                      key={index} onPress={
                         ()=> this.props.navigation.navigate('TourMessage',{id:this.state.msg[index].id})}>
                 <Image  source={item.coverUrl} style={styles.bannerStyle}/>
-            </TouchableOpacity>)
+            </TouchableWithoutFeedback>)
     return (
         <View>
             <StatusBar backgroundColor="transparent" translucent={true}></StatusBar>

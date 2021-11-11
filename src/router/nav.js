@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState, useRef,Component } from "react";
 import {NavigationContainer, NavigationState} from '@react-navigation/native';
 import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
-import LocalStorageUtils from '../utils/LocalStorageUtils';
+
 
 // 路由
 import Tab from './tab';
@@ -43,18 +43,9 @@ import Ptwo from '../pages/personal/ptwo';
 
 const Stack = createStackNavigator();
 
-class Nav extends React.Component {
+class Nav extends Component {
   constructor(props) {
     super(props);
-    LocalStorageUtils.get('userInfo').then((userInfo) => {
-      if (userInfo !== null) {
-        // 1.重新获取用户信息
-        // 2.存储到mobx中
-      } else {
-        // 跳转登录
-        // this.props.navigate()
-      }
-    });
   }
   render() {
     return (
@@ -179,46 +170,27 @@ class Nav extends React.Component {
             }}
           />
   {/* 旅游模式 */}
-            <Stack.Screen name="Maintourytm" component={Maintourytm} options={{headerShown: false}}/>
-           <Stack.Screen name="TourMessage" component={TourMessage} options={{headerShown: false}}/>
-            {/* < Stack.Screen name="Detail" component={Detailytm} options={{headerShown: false}}/> */}
-         <Stack.Screen name="TourMessage_comments_detail" component={TourMessage_comments_detail} options={{headerShown: false}}/> 
-        <Stack.Screen name="TourMessage_comments_list" component={TourMessage_comments_list} options={{headerShown: false}}/>
-          {/*<Stack.Screen*/}
-          {/*  name="MyWallet"*/}
-          {/*  component={MyWallet}*/}
-          {/*  options={{*/}
-          {/*    ...TransitionPresets.SlideFromRightIOS,*/}
-          {/*  }}*/}
-          {/*/>*/}
-          {/*<Stack.Screen*/}
-          {/*  name="MyFans"*/}
-          {/*  component={MyFans}*/}
-          {/*  options={{*/}
-          {/*    ...TransitionPresets.SlideFromRightIOS,*/}
-          {/*  }}*/}
-          {/*/>*/}
-          {/*<Stack.Screen*/}
-          {/*  name="DataEdit"*/}
-          {/*  component={DataEdit}*/}
-          {/*  options={{*/}
-          {/*    ...TransitionPresets.SlideFromRightIOS,*/}
-          {/*  }}*/}
-          {/*/>*/}
-          {/*<Stack.Screen*/}
-          {/*  name="HomeSearch"*/}
-          {/*  component={HomeSearch}*/}
-          {/*  options={{*/}
-          {/*    ...TransitionPresets.SlideFromRightIOS,*/}
-          {/*  }}*/}
-          {/*/>*/}
-          {/*<Stack.Screen*/}
-          {/*  name="bookContent"*/}
-          {/*  component={bookContent}*/}
-          {/*  options={{*/}
-          {/*    ...TransitionPresets.SlideFromRightIOS,*/}
-          {/*  }}*/}
-          {/*/>*/}
+            <Stack.Screen
+                name="Maintourytm" 
+                component={Maintourytm}
+                options={{headerShown: false}}
+            />
+           <Stack.Screen 
+                name="TourMessage" 
+                component={TourMessage} 
+                options={{headerShown: false}}
+            />
+            <Stack.Screen
+                name="TourMessage_comments_detail" 
+                component={TourMessage_comments_detail} 
+                options={{headerShown: false}}
+            /> 
+            <Stack.Screen 
+                name="TourMessage_comments_list" 
+                component={TourMessage_comments_list} 
+                options={{headerShown: false}}
+            />
+       
         </Stack.Navigator>
       </NavigationContainer>
     );

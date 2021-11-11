@@ -2,6 +2,7 @@ import React, { Component }  from 'react';
 import { View, Text, Image ,Input,StatusBar,ImageBackground, StyleSheet,TouchableOpacity,TextInput,Button} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { ListItem,Avatar,BottomSheet} from 'react-native-elements'
+import LocalStorageUtils from '../../utils/LocalStorageUtils'
 // import { } from 'react-native-elements'
 // import { Input } from 'react-native-elements';
 // import validator from './tools/validator';
@@ -10,6 +11,8 @@ import { ListItem,Avatar,BottomSheet} from 'react-native-elements'
   onPress=async()=>{
     let res =await Http.userexit({});
     console.log(res);
+    LocalStorageUtils.deleteItem('userInfo');
+    this.props.navigation.navigate("Logintwo");
   }
 
     render() {

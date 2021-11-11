@@ -5,18 +5,11 @@ import {
     Animated,
     PanResponder,
     TouchableOpacity,
-    Image,
-    SafeAreaView,
-    ScrollView,
-    StatusBar,
     StyleSheet,
     Text,
     useColorScheme,
     TextInput,
     View,
-    Button,
-    ImageBackground,
-    TouchableHighlight
 
 } from 'react-native';
 class Newsbox extends Component{
@@ -30,7 +23,7 @@ this.state={
     }
 };
 this._onPress=()=>{
-        this.props.value.navigation.navigate('Detail');
+        this.props.value.navigation.navigate('Details',{id:1});
     }
 
 }

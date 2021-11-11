@@ -132,12 +132,14 @@ passwordChange=(password)=>{
 onpress=async()=>{
       const {password,phoneNumber} =this.state;
       console.log(password);   
-      this.props.navigation.navigate("Personal");
       // let res= await Http.dynamicList({number:phoneNumber,password:password});
       let res= await Http.dynamicList({number:'13303454658',password:'123456'});
       console.log('登录：', res);
       const token =res.data.data.accessToken;
       this.props.RootStore.userStore.setToken(token);
+        let config={'name':"redtour"}
+       LocalStorageUtils.set('userInfo',config)
+     this.props.navigation.navigate("首页");
         // LocalStorageUtils.set('token', token);
         // console.log(RootStore.userStore.allData.ANSWER_ACCESS_TOKEN);
 }

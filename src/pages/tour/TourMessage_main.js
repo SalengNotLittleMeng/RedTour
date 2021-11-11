@@ -87,7 +87,7 @@ export default class TourMessage_main extends Component {
                             <View style={styles.map_round}>
                                 <Image style={styles.map_icon} source={require('../../static/tour/detail/location_icon.png')}/>
                             </View>
-                            <Text style={{color:'#707070',fontSize:15,position:'absolute',left:305,top:35}}>地图·周边</Text>
+                            <Text style={{color:'#707070',fontSize:15,position:'absolute',left:290,top:35}}>地图·周边</Text>
                         </View>
                     </View>
                     <View style={styles.brief_box}>
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
     },
     map_round:{
         position:'absolute',
-        left:320,
+        left:305,
         width:30,
         height:30,
         borderRadius:20,

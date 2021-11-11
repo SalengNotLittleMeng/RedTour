@@ -148,7 +148,7 @@ render(){
     return (
         <View>
             <StatusBar backgroundColor="transparent" translucent={true}></StatusBar>
-            <View onPress={()=>console.log("123")} style={{ backgroundColor: '#1E1E1E',width: '100%', height: 48, zIndex: 10 }}>
+            <View  style={{ backgroundColor: '#1E1E1E',width: '100%', height: 48, zIndex: 10 }}>
                 <Text style={[styles.toptitle]}>旅游模式</Text>
             </View>  
             <View style={styles.container}>
@@ -186,13 +186,13 @@ render(){
                                 <Image style={[styles.buttom_icon]} 
                                 resizeMethod="scale"
                                 source={require('../../static/tour/detail/flash.png')} />
-                                <Text style={{position:'absolute',top:90,left:55, fontSize:20,color:'white'}}>刷新</Text>
+                                <Text style={{position:'absolute',top:60,left:55, fontSize:20,color:'white'}}>刷新</Text>
                             </View >
                                <View style={{display:this.state.isshow?'flex':'none'}}>
                                     <Image style={[styles.buttom_icon]} 
                                         resizeMethod="scale"
                                         source={require('../../static/tour/detail/more.png')} />
-                                    <Text  style={{position:'absolute',top:90,left:55, fontSize:20,color:'white'}}>更多</Text>
+                                    <Text  style={{position:'absolute',top:60,left:55, fontSize:20,color:'white'}}>更多</Text>
                                 </View>
                         </Animated.View>
             </View>
@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
     },
     buttom_icon:{
     position:'relative',
-    top:-20,
+    top:-50,
     width:50,
     height:50,
     margin:50,

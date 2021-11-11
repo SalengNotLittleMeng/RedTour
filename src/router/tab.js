@@ -139,11 +139,11 @@ function tabIcon(isFocused, index) {
   if (index === 1) {
     return (
       <Image
-        source={require('../assets/icons/play.png')}
+        source={require('../assets/icons/playing.png')}
         style={{
-          marginBottom: pxToDp(84),
-          width: pxToDp(98),
-          height: pxToDp(98),
+          marginBottom: pxToDp(160),
+          width: pxToDp(208),
+          height: pxToDp(208),
         }}
         resizeMode={'contain'}
       />

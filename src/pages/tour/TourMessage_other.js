@@ -88,6 +88,7 @@ ticketsMsg:'需购票￥280.00起，方特主题乐园内大部分项目及欣�
             <View  style={styles.time_box}>
                 <Text style={styles.time_title}>必看贴士</Text>
                 <Text style={{fontSize:16,marginLeft:15,marginBottom:10}}>{this.state.word}</Text>
+                <View style={{height:60}}></View>
             </View>
         </View>
     )

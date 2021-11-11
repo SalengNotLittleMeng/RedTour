@@ -109,12 +109,12 @@ const styles = StyleSheet.create({
     },
     one_news_content:{
         color:'#707070',
-        width:280,
+        width:275,
     },
     news_cover:{
         position:'absolute',
         top:20,
-        left:295,
+        left:282,
         width:60,
         height:60,
         borderRadius:5,

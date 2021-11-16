@@ -6,6 +6,7 @@ const userStore = {
     gender: '',
     avatar: '',
     birthday: '',
+
 };
 
 export default userStore;

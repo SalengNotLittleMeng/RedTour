@@ -1,13 +1,12 @@
 
 import React, { useState, useRef,Component } from "react";
+import Audio from './Audio';
 import {
     Alert,
     Animated,
     PanResponder,
-    TouchableOpacity,
     Image,
     TouchableWithoutFeedback,
-    SafeAreaView,
     ScrollView,
     StatusBar,
     StyleSheet,
@@ -15,6 +14,9 @@ import {
     View,
 } from 'react-native';
 import axios from 'axios';
+import {inject,observer,action} from 'mobx-react'
+@inject('RootStore')
+@observer
 export default class Maintourytm extends Component {
     constructor(props){
     super(props);
@@ -51,10 +53,10 @@ export default class Maintourytm extends Component {
         if(gestureState.dx>40){
             this.props.navigation.navigate('TourMessage');
             }
-        console.log(gestureState.dx);
-           if(gestureState.dx<-40){
-            this.props.navigation.navigate('Detail');
-            }
+        //    if(gestureState.dx<-40){
+        //     this.props.RootStore.globalStore.setPlaying();
+        //     console.log(this.props.RootStore.globalStore.isPlaying)
+        //     }
         }
         
     })
@@ -181,7 +183,7 @@ render(){
                        <View style = {styles.buttomBlock}></View>
                     </View>
                 </ScrollView>
-                     <Animated.View style = {[styles.buttomBox,{opacity:this.state.calHeight}]}>
+                     <Animated.View style = {[styles.buttomBox,{opacity:this.state.calHeight}]} >
                             <View style={{display:this.state.isshow?'flex':'none'}}>
                                 <Image style={[styles.buttom_icon]} 
                                 resizeMethod="scale"
@@ -197,7 +199,9 @@ render(){
                         </Animated.View>
             </View>
             </View>
+        <Audio></Audio>
         </View>
+
     )
 }
 

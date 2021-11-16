@@ -41,6 +41,8 @@ import {
   tabbar_message,
   tabbar_mine,
 } from '../constants/svg';
+import {inject,observer} from 'mobx-react'
+
 import Svg from 'react-native-svg-uri';
 
 const tabSelectedArray = [
@@ -50,7 +52,6 @@ const tabSelectedArray = [
   tabbar_message_selected,
   tabbar_mine_selected,
 ];
-
 // const tabArray = [tabbar_home, tabbar_demand, '', tabbar_message, tabbar_mine];
 const tabArray = [tabbar_tuijian, '', tabbar_lvyou];
 
@@ -134,10 +135,12 @@ function MyTabBar({state, descriptors, navigation}) {
     </View>
   );
 }
-
 function tabIcon(isFocused, index) {
   if (index === 1) {
     return (
+    <TouchableOpacity onPress={()=>{
+            RootStore.globalStore.setPlaying()
+}}>
       <Image
         source={require('../assets/icons/playing.png')}
         style={{
@@ -147,6 +150,7 @@ function tabIcon(isFocused, index) {
         }}
         resizeMode={'contain'}
       />
+    </TouchableOpacity>
     );
   }
   //有选择样式之后代码
@@ -179,6 +183,8 @@ function tabIcon(isFocused, index) {
       />
     );
   }
+@inject('RootStore')
+@observer
 class Tabs extends Component {
   constructor(props) {
     super(props);

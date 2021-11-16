@@ -8,6 +8,8 @@ target 'ReactNativeCli' do
 
   use_react_native!(:path => config["reactNativePath"])
 
+  pod 'RNSound', :path => '../node_modules/react-native-sound'
+
   target 'ReactNativeCliTests' do
     inherit! :complete
     # Pods for testing

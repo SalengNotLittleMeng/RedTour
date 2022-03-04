@@ -79,6 +79,7 @@ import com.android.build.OutputFile
 
 project.ext.react = [
     enableHermes: false,  // clean and rebuild if changing
+        cliPath:"node_modules/react-native/local-cli/cli.js"
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
@@ -154,10 +155,10 @@ android {
         }
           release {
             if (project.hasProperty('MYAPP_RELEASE_STORE_FILE')) {
-                storeFile file(MYAPP_RELEASE_STORE_FILE)
-                storePassword MYAPP_RELEASE_STORE_PASSWORD
-                keyAlias MYAPP_RELEASE_KEY_ALIAS
-                keyPassword MYAPP_RELEASE_KEY_PASSWORD
+            keyAlias 'android.keystore'
+            keyPassword '111111'
+            storeFile file('../android.keystore')
+            storePassword '111111'
             }
           }
     }

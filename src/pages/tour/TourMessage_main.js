@@ -20,13 +20,15 @@ export default class TourMessage_main extends Component {
         }
     };
     }
-     componentWillMount(){
-       if(this.props.msg&&this.props.msg.name!=""){
-             this.setState({msg:this.props.msg});
+    componentWillReceiveProps(props){
+       if(props.msg&&props.msg.name!=""){
+             this.setState({msg:props.msg});
         }
     } 
     render(){
-        console.log(this.state.msg)
+    //   if(this.props.msg&&this.props.msg.name!=""){
+    //          this.setState({msg:this.props.msg});
+    //     }
         let DOM =this.state.msg.unOnline? this.state.msg.imges.map((item, index) =>(<Image source={item} style={styles.bannerStyle}/>) )
                                         :this.state.msg.imges.map((item, index) =>(<Image source={{uri:item+""}} style={styles.bannerStyle}/>) )
     return (

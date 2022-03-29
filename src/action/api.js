@@ -46,6 +46,42 @@ const api = {
         url: '/authentication/user/uploadImg',
         method: 'post',
     },
+    // 旅游模式
+    // 展示推荐景区
+    spotShow: {
+        url: '/spot/spot/show',
+        method: 'get'
+    },
+    // 推荐详情
+    spotDetail: {
+        url: '/spot/spot/queryById',
+        method: 'post'
+    },
+    // 获取景点评论
+    spotComment: {
+        url: '/comment/commentsRoot/commentrecord',
+        method: 'post'
+    },
+    // 添加评论
+    addCommit: {
+        url: '/comment/commentsRoot/insertcomment',
+        method: 'post'
+    },
+    // 评论点赞
+    loveCommit: {
+        url: '/comment/commentsRoot/commentaddlike',
+        method: 'post'
+    },
+    // 展示子评论
+    replayCommitList: {
+        url: '/comment/commentsReply/commentreplyrecord',
+        method: 'post'
+    },
+    // 添加子评论
+    replayCommitAdd: {
+        url: '/comment/commentsReply/insertcommentreply',
+        method: 'post'
+    }
 
 };
 

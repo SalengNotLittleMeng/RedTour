@@ -23,39 +23,38 @@ export default class TourMessage_comments extends Component {
     super(props);
     this.state = {
   comments:[{
-        name:'游客15364577709',
-        headimg:require('../../static/tour/detail/center.png'),
-        content:'传统文化艺术在世界文明数千年的历史长河中，以其鲜明的个性和艺术特色洋溢着中华文明的民族特性，是中华文明的大旗。',
-        time:'2020-9-10',
-         islove:true,
-        image:[require('../../static/tour/detail/center.png'),require('../../static/tour/detail/buttom.png'),require('../../static/tour/detail/top.png')],
+        userName:'游客',
+        userImg:'https://roy-tian.github.io/learning-area/extras/getting-started-web/beginner-html-site/images/firefox-icon.png',
+        comment: "加载中",
+        updateAt: "2021-10-26 21:44:09",
+        likeNumber: 0
         },{
-        name:'游客15364577709',
-        headimg:require('../../static/tour/detail/center.png'),
-        content:'传统文化艺术在世界文明数千年的历史长河中，以其鲜明的个性和艺术特色洋溢着中华文明的民族特性，是中华文明的大旗。',
-        time:'2020-9-10',
-         islove:false,
-        image:[require('../../static/tour/detail/center.png'),require('../../static/tour/detail/buttom.png'),require('../../static/tour/detail/top.png')],
-        },
+        userName:'游客',
+        userImg:'https://roy-tian.github.io/learning-area/extras/getting-started-web/beginner-html-site/images/firefox-icon.png',
+        comment: "加载中",
+        updateAt: "2021-10-26 21:44:09",
+        likeNumber: 0
+        }
         ]
     };
       this. _onPress=()=>{
              const nav =this.props.value;
-            nav.navigate('TourMessage_comments_list');
+            nav.navigate('TourMessage_comments_list',{id:this.props.msg.id});
         }
     }
-        componentWillMount(){
-        axios.post('http://y2kqrq.natappfree.cc/comment/commentsRoot/commentrecord', {
-        articleId:"1"
-        }).then(res=>{
-              console.log(res)
-            // res=res.data.data;
-            // this.setState({msg:res})
-            // console.log(this.state.msg);
-        },err=>{console.log(err)})
+   componentWillMount(){
+        gitComment=async function(params){
+            let res=await Http.spotComment({PageNum: 0,articleId:params.msg.id})
+            console.log(res)
+            res=res.data.data
+          res.code!==-1&&this.setState({comments:res})
+        }
+        gitComment.call(this,this.props)
     } 
     render(){
-         let DOM = this.state.comments.map((item, index) => 
+        let len=this.state.comments.length>3?3:this.state.comments.length
+        let arr=this.state.comments.slice(0,len)
+         let DOM =arr&&arr.map((item, index) => 
             <TourMessage_comments_item key={index} item={this.props.value} msg={this.state.comments[index]}></TourMessage_comments_item>)
     return (
         <View style={styles.body}>

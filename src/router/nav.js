@@ -22,6 +22,7 @@ import TourMessage_comments_detail from '../pages/tour/TourMessage_comments_deta
 import Recomment from '../pages/home/index';
 import Details from '../pages/details/index';
 import Comment from '../pages/comment/index';
+import Search from '../pages/search/index';
 // ---------------书籍----------------
 // 书籍内容
 // import bookContent from '../pages/books/bookContent';
@@ -165,6 +166,13 @@ class Nav extends Component {
           <Stack.Screen
             name="Comment"
             component={Comment}
+            options={{
+              ...TransitionPresets.SlideFromRightIOS,
+            }}
+          />
+        <Stack.Screen
+            name="Search"
+            component={Search}
             options={{
               ...TransitionPresets.SlideFromRightIOS,
             }}

@@ -2,7 +2,7 @@
 import React, { useState, useRef,Component } from "react";
 import Audio from './Audio';
 import {
-    Alert,
+    TouchableOpacity,
     Animated,
     PanResponder,
     Image,
@@ -22,11 +22,11 @@ export default class Maintourytm extends Component {
     super(props);
     this.state = {
         msg:[
-        {id:1,coverUrl:require('../../static/tour/detail/buttom.png'),description:'想握住此生辽阔 赠你满天星火'},
-        {id:2,coverUrl:require('../../static/tour/detail/top.png'),description:'是落日弥漫的橘，天边透亮的星。'},
-        {id:3,coverUrl:require('../../static/tour/detail/center.png'),description:'想握住此生辽阔 赠你满天星火'},
-        {id:4,coverUrl:require('../../static/tour/detail/four.png'),description:'是落日弥漫的橘，天边透亮的星。'},
-        {id:5,coverUrl:require('../../static/tour/detail/five.png'),description:'想握住此生辽阔 赠你满天星火'}
+        {id:1,coverUrl:'../../static/tour/detail/buttom.png',description:'想握住此生辽阔 赠你满天星火'},
+        {id:2,coverUrl:'../../static/tour/detail/top.png',description:'是落日弥漫的橘，天边透亮的星。'},
+        {id:3,coverUrl:'../../static/tour/detail/center.png',description:'想握住此生辽阔 赠你满天星火'},
+        {id:4,coverUrl:'../../static/tour/detail/four.png',description:'是落日弥漫的橘，天边透亮的星。'},
+        {id:5,coverUrl:'../../static/tour/detail/five.png',description:'想握住此生辽阔 赠你满天星火'}
         ],
          _scrollView: ScrollView | null | undefined,
           _scrollView_word: ScrollView | null | undefined,
@@ -66,6 +66,7 @@ export default class Maintourytm extends Component {
                 duration: 800
             }
      );
+// 底部按钮的显示与隐藏
     this.handleshow=()=>{
         this.setState({
             isshow:true
@@ -81,6 +82,7 @@ export default class Maintourytm extends Component {
              this.state.temp = (this.state.begin)%400;
             this.state.bar = Math.floor(this.state.begin/400);
     }
+// 停止拖动时文字和图片进行自动偏移
     this.onScrollEndDrag=async ()=>{
         if(this.state.temp<150){
           await  this.state._scrollView_word.scrollTo({y:140*(this.state.bar)})
@@ -113,8 +115,6 @@ export default class Maintourytm extends Component {
             this.state.bar = Math.floor(this.state.begin/130);
                     }
         }
-       this._onScrollBeginDrag=()=>{
-        }
     this._onScrollEndDrag=async ()=>{
         this.state.stopAuto = false;
         if(this.state.temp<30){
@@ -129,14 +129,28 @@ export default class Maintourytm extends Component {
             this.state.flag = true;
             this.state.stopAuto = true;
         }
+// 刷新或请求信息
+        this.flushed=()=>{
+        let getSpotMessage=async function () {
+        let res=await Http.spotShow()
+        res=res.data.data
+        if(res){this.setState({msg:res})}
+    }
+    getSpotMessage.call(this)
+        }
+// 回到顶部
+        this.scollTop=()=>{
+            this.state._scrollView.scrollTo({ x:0, y: 0, animated: true })
+            this.state._scrollView_word.scrollTo({ x:0, y: 0, animated: true })
+        }
+// 展示更多信息
+        this.getMore=()=>{
+            this.scollTop()
+            this.flushed()
+        }
     };
  componentWillMount(){
-      axios.get('http://mrka6a.natappfree.cc/spot/spot/show').then(res=>{
-        console.log(res.data.data);
-        res = res.data.data;
-        // if(res){
-        //     this.setState({msg:res})}
-        },err=>{console.log(err)});
+        this.flushed()
     }  
 render(){
      let DOM = this.state.msg.map((item, index) => 
@@ -145,7 +159,7 @@ render(){
             <TouchableWithoutFeedback {...this.pan.panHandlers}
                      key={index} onPress={
                         ()=> this.props.navigation.navigate('TourMessage',{id:this.state.msg[index].id})}>
-                <Image  source={item.coverUrl} style={styles.bannerStyle}/>
+                <Image  source={{uri:item.coverUrl}} style={styles.bannerStyle}/>
             </TouchableWithoutFeedback>)
     return (
         <View>
@@ -166,7 +180,6 @@ render(){
             </View>
                 <View pointerEvents="none" style={styles.blockground} >
                 <Image source={require('../../static/tour/detail/backblock.png')}
-                // {...this._panResponder.panHandlers}
                  />
                 </View>
             <View style={{ position: 'absolute', backgroundColor: '#1E1E1E', top: 415, width: '100%', height: '78%', opacity: 1 }}>
@@ -185,15 +198,19 @@ render(){
                 </ScrollView>
                      <Animated.View style = {[styles.buttomBox,{opacity:this.state.calHeight}]} >
                             <View style={{display:this.state.isshow?'flex':'none'}}>
+                            <TouchableOpacity onPress={this.scollTop}>
                                 <Image style={[styles.buttom_icon]} 
                                 resizeMethod="scale"
                                 source={require('../../static/tour/detail/flash.png')} />
-                                <Text style={{position:'absolute',top:60,left:55, fontSize:20,color:'white'}}>刷新</Text>
+                             </TouchableOpacity>
+                                <Text style={{position:'absolute',top:60,left:55, fontSize:20,color:'white'}}>返回</Text>
                             </View >
                                <View style={{display:this.state.isshow?'flex':'none'}}>
+                                <TouchableOpacity onPress={this.getMore}>
                                     <Image style={[styles.buttom_icon]} 
                                         resizeMethod="scale"
                                         source={require('../../static/tour/detail/more.png')} />
+                                </TouchableOpacity>
                                     <Text  style={{position:'absolute',top:60,left:55, fontSize:20,color:'white'}}>更多</Text>
                                 </View>
                         </Animated.View>

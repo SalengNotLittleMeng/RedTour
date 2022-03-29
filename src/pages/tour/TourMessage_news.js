@@ -32,7 +32,7 @@ this._onPress=()=>{
         <TouchableOpacity onPress={this._onPress}>
             <View style={styles.news_content}>
                     <Text style={styles.one_news_title}>{this.props.msg.articleContent}</Text>
-                    <Text style={styles.one_news_content}>{this.props.msg.articleContentText}</Text>
+                    <Text style={styles.one_news_content}>{this.props.msg.articleContentText.slice(0,15)}</Text>
                 <View style={styles.news_cover}><Text style={{color:'white',fontSize:20,fontWeight:'bold'}}>阅读</Text></View>
             </View>
          </TouchableOpacity>
@@ -45,24 +45,25 @@ export default class TourMessage_news extends Component {
     this.state = {
         msg:[
         {articleContent:'《神话方特》',
-        articleContentText:'>榆次老城即榆次古县城，也叫子母城，由北部的县城和南部的郭城两部分组成，县城为母城，郭城为子城......',
+        articleContentText:'榆次老城即榆次古县城，也叫子母城，由北部的县城和南部的郭城两部分组成，县城为母城，郭城为子城......',
         articleId:'',
         },
               {articleContent:'《神话方特》',
-        articleContentText:'>榆次老城即榆次古县城，也叫子母城，由北部的县城和南部的郭城两部分组成，县城为母城，郭城为子城......',
+        articleContentText:'榆次老城即榆次古县城，也叫子母城，由北部的县城和南部的郭城两部分组成，县城为母城，郭城为子城......',
         articleId:'',
         },
               {articleContent:'《神话方特》',
-        articleContentText:'>榆次老城即榆次古县城，也叫子母城，由北部的县城和南部的郭城两部分组成，县城为母城，郭城为子城......',
+        articleContentText:'榆次老城即榆次古县城，也叫子母城，由北部的县城和南部的郭城两部分组成，县城为母城，郭城为子城......',
         articleId:'',
         }
         ]
     };
 
     }
-   componentWillMount(){
-       if(this.props.msg.articleContentDtos.length!=0){
-         this.setState({msg:this.props.msg.articleContentDtos})
+   componentWillReceiveProps(props){
+    console.log(props)
+       if(props.msg.articleContentDtos.length!=0){
+         this.setState({msg:props.msg.articleContentDtos})
         }
     } 
     render(){

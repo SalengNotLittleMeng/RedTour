@@ -25,22 +25,30 @@ class Commentsbox extends Component{
     constructor(props){
     super(props);
     this.state={
-
+        islove:false
         }
+    this.setLove=()=>{
+        this.setState({islove:!this.state.islove})
+    }
     }
         render(){
-         let DOM = this.props.msg.reply.map((item, index) => 
-            <Calllist key={index} msg={this.props.msg.reply[index]}></Calllist>)
+        //  let DOM = this.props.msg.reply.map((item, index) => 
+        //     <Calllist key={index} msg={this.props.msg.reply[index]}></Calllist>)
     return (
             <View  style={styles.comments_content}>
-                    <Image style={styles.headImage} source={this.props.msg.headimg} />
-                <Text style={styles.comments_name}>{this.props.msg.name}</Text>
+                    <Image style={styles.headImage} source={this.props.msg.fromImg} />
+                <Text style={styles.comments_name}>{this.props.msg.fromName}</Text>
                 <View style={{display:'flex',flexDirection:'row',position:'absolute',left:300,top:25}}>
-                <Image style={styles.love} source={require('../../static/tour/detail/little_whitelove.png')}/>
-                <Text style={{fontSize:16,marginLeft:10,color:"#999999",position:'relative',top:-2}}>324</Text>
+                <TouchableOpacity onPress={this.setLove}>
+                <Image style={styles.love} 
+                source={this.state.islove?
+                    require('../../static/tour/detail/little_redlove.png')
+                    :require('../../static/tour/detail/little_whitelove.png')}/>
+                </TouchableOpacity>
+                <Text style={{fontSize:16,marginLeft:10,color:"#999999",position:'relative',top:-2}}></Text>
                 </View>
-                <Text style={styles.comments_main}> <Text>&emsp;&emsp;</Text>{this.props.msg.content}</Text> 
-                 {DOM}
+                <Text style={styles.comments_main}> <Text>&emsp;&emsp;</Text>{this.props.msg.comment}</Text> 
+                 {/* {DOM} */}
             </View>
     )
 }
@@ -51,13 +59,11 @@ export default class TourMessage_comments_detail extends Component {
     this.state = {
         value:'',
         msg:{
-        name:'游客15364577709',
-        headimg:require('../../static/tour/detail/center.png'),
-        content:'传统文化艺术在世界文明数千年的历史长河中，以其鲜明的个性和艺术特色洋溢着中华文明的民族特性，是中华文明的大旗。',
+        userName:'游客15364577709',
+        UserImg:require('../../static/tour/detail/center.png'),
+        comment:'传统文化艺术在世界文明数千年的历史长河中，以其鲜明的个性和艺术特色洋溢着中华文明的民族特性，是中华文明的大旗。',
         time:'2020-9-10',
-        image:[require('../../static/tour/detail/center.png'),require('../../static/tour/detail/buttom.png'),require('../../static/tour/detail/top.png')],
-         islove:false,
-        reply:[{fir:'抬头捉月光',sec:'匿名用户',content:'：大家互相学习，一起进步'}]
+        articleId:'1',
         },
          comments:[{
         name:'游客15364577709',
@@ -66,37 +72,27 @@ export default class TourMessage_comments_detail extends Component {
         time:'2020-9-10',
         image:[],
         reply:[{fir:'抬头捉月光',sec:'匿名用户',content:'：大家互相学习，一起进步'}]
-        }, {name:'游客15364577709',
-        headimg:require('../../static/tour/detail/center.png'),
-        content:'传统文化艺术在世界文明数千年的历史长河中，以其鲜明的个性和艺术特色洋溢着中华文明的民族特性，是中华文明的大旗。',
-        time:'2020-9-10',
-        reply:[],
-        image:[],
-        }, {name:'游客15364577709',
-        headimg:require('../../static/tour/detail/center.png'),
-        content:'传统文化艺术在世界文明数千年的历史长河中，以其鲜明的个性和艺术特色洋溢着中华文明的民族特性，是中华文明的大旗。',
-        time:'2020-9-10',
-        image:[],
-        reply:[{fir:'抬头捉月光',sec:'匿名用户',content:'：大家互相学习，一起进步'}]
-        }]
+        },],
+        value:''
     };
     this. _onPress=()=>{
-        Alert.alert('You long-pressed the button!')
+        addCommit=async function(){
+            let msg=this.state.msg
+            let res=await Http.replayCommitAdd({articleId:msg.articleId,comment:this.state.value,id:msg.id})
+        }
+        addCommit.call(this)
         }
     }
-    componentDidMount=()=>{
-    axios.post('http://y2kqrq.natappfree.cc/comment/commentsRoot/insertcomment', {
-        headers: {
-            token: "ANSWER7683673E5305485C908408BdE975108d",
-             },
-        articleId: "1",
-        comment: "22222"
-        }).then(res=>{
-              console.log(res)
-            // res=res.data.data;
-            // this.setState({msg:res})
-            // console.log(this.state.msg);
-        },err=>{console.log(err)})
+    componentDidMount(){
+    getReplayCommit=async function(){
+        await this.setState({msg:this.props.route.params.msg})
+        let msg=this.state.msg
+        let res=await Http.replayCommitList({PageNum:0,articleId:msg.articleId,id:msg.id})
+        res=res.data.data.recordlist
+        console.log(res)
+        this.setState({comments:res})
+    }
+        getReplayCommit.call(this)
     }
     render(){
          let DOM = this.state.comments.map((item, index) => 
@@ -110,7 +106,7 @@ export default class TourMessage_comments_detail extends Component {
                 <Image style={{position:'absolute',top:12,left:10, transform:[{scale:0.6}]}} source={require('../../static/tour/detail/back.png')} />
             </View>
                 <View  style={{height:60, display:'flex',justifyContent:'center',alignItems:'center'}}>
-                     <TouchableOpacity onPress={this._onPress}><Text style={{fontSize:21}}>评 论 详 情</Text></TouchableOpacity>
+                     <TouchableOpacity><Text style={{fontSize:21}}>评 论 详 情</Text></TouchableOpacity>
             </View>
                 <TourMessage_comments_item  msg={this.state.msg}></TourMessage_comments_item>
                     <View style={styles.middle_box}>
@@ -127,7 +123,9 @@ export default class TourMessage_comments_detail extends Component {
                 value={this.state.value}
                 />
                 <Image source={require('../../static/tour/detail/little_whitelove.png')} />
-                <Image source={require('../../static/tour/detail/renaming.png')}/>
+                <TouchableOpacity onPress={this._onPress}>
+                <View style={styles.send_button}><Text style={styles.send_text}>发送</Text></View>
+                </TouchableOpacity>
             </View>
         </View>
     )
@@ -143,6 +141,19 @@ const styles = StyleSheet.create({
     borderWidth: 1 ,
     color:'#707070',
     paddingLeft:20,
+    },
+        send_button:{
+    width:70,
+    height:35,
+    textAlign:"center",
+    backgroundColor:'#AC2910',
+    borderRadius:5,
+    display:'flex',
+     justifyContent:'center',
+    alignItems:'center'
+    },
+    send_text:{
+    color:'white',
     },
     buttom_box:{
     display:'flex',

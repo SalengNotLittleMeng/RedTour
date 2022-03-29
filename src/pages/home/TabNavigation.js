@@ -9,6 +9,9 @@ import {
 } from 'react-native';
 import { pxToDp } from '../../utils/pxToDp'; 
 
+import  {DeviceEventEmitter} from 'react-native';
+
+
 const dimen = Dimensions.get('window');
 const deviceWidth = dimen.width;
 
@@ -31,12 +34,13 @@ export default class TabBar extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            index: 0,
+            index: -1,//默认数组第零个
         }
         
         this.scroll = null;
         this.laout_list = []
         this.scrollW = 0;
+
     }
     
     render() {
@@ -47,7 +51,7 @@ export default class TabBar extends Component {
                     showsHorizontalScrollIndicator={false}
                     snapToAlignment="center">
                     {this.props.data.map((item, index) =>
-                        <TouchableOpacity onPress={() => this.setIndex(index)} onLayout={e => this.setLaout(e.nativeEvent.layout, index)} key={item.id} style={tabBarStyle.itemBtn}>
+                        <TouchableOpacity  onPress={() => this.setIndex(index)} onLayout={e => this.setLaout(e.nativeEvent.layout, index)} key={item.id} style={tabBarStyle.itemBtn}>
                             <Text style={[tabBarStyle.item, this.state.index === index ? tabBarStyle.active : null]} > {item.typeLabel}</Text>
                             <View style={[tabBarStyle.line, this.state.index === index ? tabBarStyle.active2 : null]}></View>
                         </TouchableOpacity>
@@ -78,7 +82,6 @@ export default class TabBar extends Component {
         this.laout_list[index] = layout;
         this.scrollW += layout.width;
     }
-
     setIndex(index, bl = true) {
         this.setState({ index })
         if (!this.scroll) return;

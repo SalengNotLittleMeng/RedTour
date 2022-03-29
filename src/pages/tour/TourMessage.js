@@ -46,14 +46,12 @@ export default class TourMessage extends Component {
 
     }
      componentWillMount(){
-        axios.post('http://7gia2p.natappfree.cc/spot/spot/queryById', {
-        id:this.props.route.params.id
-        }).then(res=>{
-              console.log(res)
+        getSpotDetail=async function(){
+            let res=await Http.spotDetail({id:this.props.route.params.id})
             res=res.data.data;
             this.setState({msg:res})
-            console.log(this.state.msg);
-        },err=>{console.log(err)})
+        }
+        getSpotDetail.call(this)
     } 
     render(){
     return (
@@ -61,7 +59,7 @@ export default class TourMessage extends Component {
              <ScrollView style={{height:800}}>
                 <TourMessage_main msg={this.state.msg}></TourMessage_main>
                 <TourMessage_news value={this.props} msg={this.state.msg}></TourMessage_news>
-                <TourMessage_comments value={this.props.navigation}></TourMessage_comments>
+                <TourMessage_comments value={this.props.navigation} msg={this.state.msg}></TourMessage_comments>
                 <TourMessage_other></TourMessage_other>
                 {/* <View style={{height:800}}></View> */}
             </ScrollView>  

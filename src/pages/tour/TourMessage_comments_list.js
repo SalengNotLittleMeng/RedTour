@@ -4,6 +4,8 @@ import {
     ScrollView,
     StatusBar,
     StyleSheet,
+    TextInput,
+    TouchableOpacity,
     Text,
     View,
 } from 'react-native';
@@ -13,38 +15,42 @@ export default class TourMessage_comments_list extends Component {
     super(props);
     this.state = {
         comments:[{
-        name:'游客15364577709',
-        headimg:require('../../static/tour/detail/center.png'),
-        content:'传统文化艺术在世界文明数千年的历史长河中，以其鲜明的个性和艺术特色洋溢着中华文明的民族特性，是中华文明的大旗。',
-        time:'2020-9-10',
-        islove:false,
-        image:[require('../../static/tour/detail/center.png'),require('../../static/tour/detail/buttom.png'),require('../../static/tour/detail/top.png')],
+        userName:'游客',
+        userImg:'https://roy-tian.github.io/learning-area/extras/getting-started-web/beginner-html-site/images/firefox-icon.png',
+        comment: "加载中",
+        updateAt: "2021-10-26 21:44:09",
+        likeNumber: 0
         },{
-        name:'游客15364577709',
-        headimg:require('../../static/tour/detail/center.png'),
-        content:'传统文化艺术在世界文明数千年的历史长河中，以其鲜明的个性和艺术特色洋溢着中华文明的民族特性，是中华文明的大旗。',
-        time:'2020-9-10',
-         islove:false,
-        image:[require('../../static/tour/detail/center.png'),require('../../static/tour/detail/buttom.png'),require('../../static/tour/detail/top.png')],
-        },{
-        name:'游客15364577709',
-        headimg:require('../../static/tour/detail/center.png'),
-        content:'传统文化艺术在世界文明数千年的历史长河中，以其鲜明的个性和艺术特色洋溢着中华文明的民族特性，是中华文明的大旗。',
-        time:'2020-9-10',
-         islove:false,
-        image:[],
-        },{
-        name:'游客15364577709',
-        headimg:require('../../static/tour/detail/center.png'),
-        content:'传统文化艺术在世界文明数千年的历史长河中，以其鲜明的个性和艺术特色洋溢着中华文明的民族特性，是中华文明的大旗。',
-        time:'2020-9-10',
-         islove:false,
-        image:[],
-        },
-        ]
+        userName:'游客',
+        userImg:'https://roy-tian.github.io/learning-area/extras/getting-started-web/beginner-html-site/images/firefox-icon.png',
+        comment: "加载中",
+        updateAt: "2021-10-26 21:44:09",
+        likeNumber: 0
+        }
+        ],
+        value:''
     };
-
+    this. _onPress=()=>{
+            addCommit=async function(){
+                let res=await Http.addCommit({articleId:this.props.route.params.id,comment:this.state.value})
+                if(res.data.code==200){
+                console.log(res.data)
+                    this.setState({value:''})
+                    this.gitComment().call(this)
+                    console.log(this.state.comments)
+                }
+            }
+            addCommit.call(this)
+        }
+    this.gitComment=async function(){
+            let res=await Http.spotComment({PageNum: 0,articleId:this.props.route.params.id})
+            res=res.data.data
+          res.code!==-1&&this.setState({comments:res})
+        }
     }
+    componentWillMount(){
+        this.gitComment.call(this)
+    } 
     render(){
          let DOM = this.state.comments.map((item, index) => 
             <TourMessage_comments_item key={index} item={this.props.navigation} msg={this.state.comments[index]}></TourMessage_comments_item>)
@@ -55,16 +61,67 @@ export default class TourMessage_comments_list extends Component {
             <View style={{height:60, display:'flex',justifyContent:'center',alignItems:'center'}}>
                 <Text style={{fontSize:21}}>评 论</Text>
             </View>
-            <ScrollView>
+            <ScrollView style={styles.middle}>
                 {DOM}
                     <View style={{height:60}}></View>
             </ScrollView>
+            <View style={styles.buttom_box}>
+                <TextInput placeholder="说说你的看法..." 
+                style={styles.input}
+                onChangeText={text =>{this.setState({value:text})}}
+                value={this.state.value}
+                />
+                <Image source={require('../../static/tour/detail/little_whitelove.png')} />
+            <TouchableOpacity onPress={this._onPress}>
+                <View style={styles.send_button}><Text style={styles.send_text}>发送</Text></View>
+            </TouchableOpacity>
+            </View>
         </View>
     )
 }
 }
 const styles = StyleSheet.create({  
     body:{
+        flex:1,
+        display:'flex',
+         flexDirection:'column',
+        justifyContent:"space-between",
         backgroundColor:'white'
+    },
+    middle:{
+    flexBasis:1
+    },
+    send_button:{
+    width:70,
+    height:35,
+    textAlign:"center",
+    backgroundColor:'#AC2910',
+    borderRadius:5,
+    display:'flex',
+     justifyContent:'center',
+    alignItems:'center'
+    },
+    send_text:{
+    color:'white',
+    },
+    input:{
+    width:250,
+    borderRadius:20,
+    height: 40, 
+    borderColor:'rgba(0,0,0,0)',
+    backgroundColor: '#F5F5F5', 
+    borderWidth: 1 ,
+    color:'#707070',
+    paddingLeft:20,
+    },
+    buttom_box:{
+    display:'flex',
+    alignItems:'center',
+    justifyContent:'space-evenly',
+    flexDirection:'row',
+    height:60, 
+    backgroundColor:'white',
+    borderTopWidth:1,
+    borderTopColor:'#E4E4E4'
     },
 });

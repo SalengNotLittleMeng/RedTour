@@ -71,11 +71,14 @@ export default class TabBar extends Component {
         return !(this.shouldUpdate = false);
     }
     UNSAFE_componentWillReceiveProps(pp) {
-        if (pp.index != this.props.index) {
+        let timer=null
+        return function(){
+                if (pp.index != this.props.index) {
             this.setState({ index: pp.index })
-            setTimeout(() => {
+           timer= setTimeout(() => {
                 this.setIndex(pp.index, false);
             }, 200);
+        }
         }
     }
     setLaout(layout, index) {

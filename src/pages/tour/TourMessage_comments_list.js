@@ -47,6 +47,7 @@ export default class TourMessage_comments_list extends Component {
         }
     this.gitComment=async function(){
             let res=await Http.spotComment({PageNum: 0,articleId:this.props.route.params.id})
+                console.log(res)
             res=res.data.data
           res.code!==-1&&this.setState({comments:res})
         }
@@ -55,8 +56,13 @@ export default class TourMessage_comments_list extends Component {
         this.gitComment.call(this)
     } 
     render(){
-         let DOM = this.state.comments.map((item, index) => 
+         let DOM =''
+            if(this.state.comments.length==0){
+                DOM=<View style={styles.white_screen}><Text style={{fontSize:20,color:'#888888'}}>暂时还没有评论哦,快来抢沙发吧！</Text></View>
+            }else{
+            DOM= this.state.comments.reverse().map((item, index) => 
             <TourMessage_comments_item key={index} item={this.props.navigation} msg={this.state.comments[index]}></TourMessage_comments_item>)
+            }
     return (
         <View style={styles.body}>
         <StatusBar backgroundColor="transparent" translucent={true}></StatusBar>
@@ -84,6 +90,12 @@ export default class TourMessage_comments_list extends Component {
 }
 }
 const styles = StyleSheet.create({  
+white_screen:{
+    flex:1,
+    marginTop:120,
+     justifyContent:'center',
+    alignItems:'center'
+},
     body:{
         flex:1,
         display:'flex',

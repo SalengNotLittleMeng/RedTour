@@ -106,9 +106,11 @@ export default class TourMessage_comments_detail extends Component {
             <View style={{flex:1}}>
                    <ScrollView >
         <StatusBar backgroundColor="transparent" translucent={true}></StatusBar>
-             <View>
-                <Image style={{position:'absolute',top:12,left:10, transform:[{scale:0.6}]}} source={require('../../static/tour/detail/back.png')} />
-            </View>
+              <TouchableOpacity onPress={()=>{console.log(this.props.navigation)}}>
+               <View>
+                     <Image style={{position:'absolute',top:12,left:10, transform:[{scale:0.6}]}} source={require('../../static/tour/detail/back.png')} />
+                </View>
+             </TouchableOpacity>
                 <View  style={{height:60, display:'flex',justifyContent:'center',alignItems:'center'}}>
                      <TouchableOpacity><Text style={{fontSize:21}}>评 论 详 情</Text></TouchableOpacity>
             </View>

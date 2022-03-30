@@ -42,18 +42,18 @@ export default class TourMessage_comments extends Component {
             nav.navigate('TourMessage_comments_list',{id:this.props.msg.id});
         }
     }
-   componentWillMount(){
+   componentWillReceiveProps(props){
         gitComment=async function(params){
             let res=await Http.spotComment({PageNum: 0,articleId:params.msg.id})
             console.log(res)
             res=res.data.data
           res.code!==-1&&this.setState({comments:res})
         }
-        gitComment.call(this,this.props)
+        gitComment.call(this,props)
     } 
     render(){
         let len=this.state.comments.length>3?3:this.state.comments.length
-        let arr=this.state.comments.slice(0,len)
+        let arr=this.state.comments.slice(0,len).reverse()
          let DOM =arr&&arr.map((item, index) => 
             <TourMessage_comments_item key={index} item={this.props.value} msg={this.state.comments[index]}></TourMessage_comments_item>)
     return (

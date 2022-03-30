@@ -57,7 +57,6 @@ export default class Maintourytm extends Component {
         //     console.log(this.props.RootStore.globalStore.isPlaying)
         //     }
         }
-        
     })
     this.fadeOutAnimated = Animated.timing(
             this.state.calHeight,{

@@ -41,6 +41,11 @@ const api = {
         url: '/authentication/user/exit',
         method: 'post',
     },
+    // 搜索
+    userSearch: {
+        url: '/select',
+        method: 'post'
+    },
     //  上传头像
     uploadImg: {
         url: '/authentication/user/uploadImg',

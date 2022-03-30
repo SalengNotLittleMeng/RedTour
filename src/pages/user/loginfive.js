@@ -73,9 +73,9 @@ newpassword=(newpassword)=>{
 // 点击确定
 queding=async()=>{
   const {newpassword}=this.state;
-  console.log(newpassword)
   let res =await  Http.xiugaipassward({phoneNumber:phone,password:newpassword});
   console.log(res);
+  this.props.navigation.navigate("Logintwo");
 }
 // 渲染页面——重置密码输入手机号码
   phone=()=>{
@@ -150,6 +150,7 @@ queding=async()=>{
            underlineColorAndroid='#666666'
            style={{ height: 60,fontSize:20,width:220,marginTop:15,marginBottom:30}}
            onChangeText={this.newpassword}
+           secureTextEntry={true}
            // value={value}
            />
 

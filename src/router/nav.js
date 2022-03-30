@@ -40,6 +40,7 @@ import Pthree from '../pages/personal/pthree';
 import Personal from '../pages/personal/personal';
 import Pone from '../pages/personal/pone';
 import Ptwo from '../pages/personal/ptwo';
+import Safe from "../pages/personal/safe";
 
 
 const Stack = createStackNavigator();
@@ -109,6 +110,13 @@ class Nav extends Component {
           <Stack.Screen
             name="Nicheng"
             component={Nicheng}
+            options={{
+              ...TransitionPresets.SlideFromRightIOS,
+            }}
+          />
+         <Stack.Screen
+            name="Safe"
+            component={Safe}
             options={{
               ...TransitionPresets.SlideFromRightIOS,
             }}

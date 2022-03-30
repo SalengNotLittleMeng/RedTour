@@ -1,28 +1,7 @@
-// import React, {Component} from 'react';
-// import {View, Text} from 'react-native';
-
-// class Index extends Component {
-//   constructor(props) {
-//     super(props);
-//     this.state = {};
-//   }
-
-//   render() {
-//     return (
-//       <View>
-//         <Text>
-
-//         </Text>
-//       </View>
-//     );
-//   }
-// }
-
-// export default Index;
 import React, { Component }  from 'react';
 import { View, Alert,Text, Image ,StatusBar,ImageBackground, StyleSheet,Button,TouchableOpacity} from 'react-native';
 // import Login from './login';
-// import { CheckBox } from 'react-native-elements'
+import { CheckBox } from 'react-native-elements'
 
 class Login extends Component {
   constructor(props){
@@ -31,6 +10,8 @@ class Login extends Component {
         checked:true
     }
 }
+// 13303454658
+
 press = () => {
   this.setState({
     checked:true
@@ -64,12 +45,12 @@ press = () => {
             <Image source={require('../imgc/weibo.png')}></Image>
         </Text>
         <Text style={{position:'absolute',marginTop:680,color:'white'}}>
-                 {/* <CheckBox
-            checked={this.state.checked}
-            checkedColor='white'
-           onPress={this.press}
-          style={{alignSelf:'center'}}
-        />                   */}
+                 <CheckBox
+                    checked={this.state.checked}
+                    checkedColor='white'
+                   onPress={this.press}
+                  style={{alignSelf:'center'}}
+                />                  
         <Text>                                                                             </Text>
         </Text>
         <Text style={{position:'absolute',marginTop:690,color:'white'}}>

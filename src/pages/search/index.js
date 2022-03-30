@@ -11,12 +11,14 @@ import {
     Alert,
     flex,
     TouchableOpacity,
-    BaseComponent
+    BaseComponent  
     
 } from 'react-native';
 // import { withNavigation } from 'react-navigation';
+// import { NavigationEvents } from 'react-navigation';
+import LocalStorageUtils from '../../utils/LocalStorageUtils';
 import { pxToDp } from '../../utils/pxToDp';
-
+import axios from 'axios'
 export default class Search1 extends Component {
     constructor(props) {
         super(props);
@@ -24,9 +26,10 @@ export default class Search1 extends Component {
             value: '',
             placeholder: '搜索',
             isPostList: false, //是否搜索
-            keyword: '',//搜索关键字
+            keyword: '',//搜索关键字  
             searchHistory: [],// 搜索历史数组
             hotTagsArr: [],// 热门搜索标签数组
+            pageNum:0,// 默认页码
         };
     }
     componentDidMount() {
@@ -36,6 +39,7 @@ export default class Search1 extends Component {
 
     // 方法
         //获取搜索列表数据
+        // (热门搜索)
         _getHotWords() {
             // ModalIndicator.show('请求中...')
             let params = '{"data":{}}'
@@ -45,7 +49,7 @@ export default class Search1 extends Component {
             //         if (data.code == 0) {
             //             console.log('hotTagsArr: ' + data.data)
             //             console.log('hotTagsArr: ' + data.data.hot_words)
-            //             if (!_.isEmpty(data.data.hot_words)) {
+            //             if (!_.isEmpty(data.data.hot_words)) {                       //！isEmpty是非空的
             //                 this.setState({
             //                     hotTagsArr: data.data.hot_words,
             //                 })
@@ -64,19 +68,26 @@ export default class Search1 extends Component {
         }
         
         //关键字改变
-        onChanegeTextKeyword(Val) {
-            let keys = {};
+        onChanegeTextKeyword= async(Val)=> {
             //输入的关键字去空格空字符
             let newVal = Val.replace(/(^\s*)|(\s*$)/g, "")
-            if (!_.isEmpty(newVal)) {
-                keys = {
-                    keyword: newVal
-                };
+            console.log(newVal)
+            if (newVal!="") {
                 this.setState({isPostList: true})
             } else {
                 // Toast.message('请输入搜索关键字', null, 'center')
             }
-            this.setState({keyword: keys});
+           await this.setState({keyword: newVal});
+            //对接开始
+// 这里是搜索的对接部分
+// 测试的时候把下面这行注释取消掉，将keyword改成'逸'，能够搜索出数据
+            // this.setState({keyword:'逸'})
+             axios.post(`http://49.233.252.20:8085/select/${this.state.keyword}`,{
+                pageNum:this.state.pageNum
+            }).then(function(res){
+                console.log(res)
+            },function(err){console.log(err)})
+            //对接结束
         }
     
         //历史和热门标签值赋值输入框
@@ -134,18 +145,18 @@ export default class Search1 extends Component {
         // 保存搜索标签
         _insertSearch(newText) {
             let text = newText.replace(/(^\s*)|(\s*$)/g, "")
-            if (!_.isEmpty(text)) {
+            if (text!="") {
                 if (this.state.searchHistory.indexOf(text) != -1) {
                     // 本地历史 已有 搜索内容
                     let index = this.state.searchHistory.indexOf(text);
                     let tempArr = arrDelete(this.state.searchHistory, index)
                     tempArr.unshift(text);
-                    setItem("searchHistory", tempArr);
+                    LocalStorageUtils.set("searchHistory", tempArr);
                 } else {
                     // 本地历史 无 搜索内容
                     let tempArr = this.state.searchHistory;
                     tempArr.unshift(text);
-                    setItem("searchHistory", tempArr);
+                    LocalStorageUtils.set("searchHistory", tempArr);
                 }
             }
         }
@@ -157,12 +168,12 @@ export default class Search1 extends Component {
 
             <View style={styles.container}>
                 {/*监听页面，刷新搜索本地历史历史*/}
-                {/* <NavigationEvents onWillFocus={() => {
+                {/* <NavigationEvents onWillFocus={() => {      //onWillFocus：页面将要获得焦点;react-navigation提供NavigationEvents onWillFocus
                     //查询本地搜索历史
                     this._getHistory();
                 }}/> */}
                 {/* <Header title='搜索'
-                        navigation={this.props.navigation}
+                        navigation={this.props.navigation}      //或许是作者自己写的组件
                         show_close_img={true}
                 /> */}
                 <View style={styles.inputBox}>
@@ -200,7 +211,7 @@ export default class Search1 extends Component {
                         //列表
                         <ScrollView style={styles.scrollView}>
                             <View style={styles.listView}>
-                                {/* <PostSearchList keyword={this.state.keyword}{...this.props}/> */}
+
                             </View>
                         </ScrollView>
                         :
@@ -303,7 +314,10 @@ const styles = StyleSheet.create({
         backgroundColor: '#f1f1f1',
         marginTop: 10,
     },
-    scrollView: {},
+    // scrollView: {
+    //     marginTop:200,
+    //     backgroundColor:'red'
+    // },
     listView: {
         flex: 1,
         flexDirection: 'row',

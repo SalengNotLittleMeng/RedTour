@@ -21,15 +21,16 @@ class Logintwo  extends Component {
      super(props);
    }
     state = {
-      phoneNumber:"15235684045",
+      phoneNumber:"13303454658",
       phoneValid:true,
       showone:true,
       showtwo:false,
       // showone:false,
       // showtwo:false,
       // 验证码
-      verphone:" ",
-      password:" "
+      verphone:"123456",
+      password:"123456",
+      disabled: false,
     }
 
 // 验证码的定时器
@@ -65,9 +66,7 @@ class Logintwo  extends Component {
             
               console.log(phoneNumber);
               let res =await  Http.hqyanzhengma({phoneNumber:phoneNumber});
-              if(res.data.code==500){
-                 Alert.alert('好像出了一些问题哦');
-            }
+              console.log(res);
             // const token =index.setToken(token);
 
             
@@ -134,19 +133,26 @@ passwordChange=(password)=>{
 onpress=async()=>{
       const {password,phoneNumber} =this.state;
       console.log(password);   
-      // let res= await Http.dynamicList({number:phoneNumber,password:password});
-      let res= await Http.dynamicList({number:'13303454658',password:'123456'});
-      console.log('登录：', res);
-      const token =res.data.data.accessToken;
-      this.props.RootStore.userStore.setToken(token);
-        let config={'name':"redtour"}
-       LocalStorageUtils.set('userInfo',config)
-     this.props.navigation.navigate("Tab");
-        LocalStorageUtils.set('token', token);
+      let res= await Http.dynamicList({number:phoneNumber,password:password});
+    console.log(res)
+      // let res= await Http.dynamicList({number:'13303454658',password:'123456'});
+     res.data&&res.data.code==200?this.loginSuccee(res):this.loginError(res)
+
+     
+        // LocalStorageUtils.set('token', token);
         // console.log(RootStore.userStore.allData.ANSWER_ACCESS_TOKEN);
 }
   
-
+loginSuccee=(res)=>{
+      const token =res.data.data.accessToken;
+      this.props.RootStore.userStore.setToken(token);
+      let config={'name':"redtour"}
+      LocalStorageUtils.set('userInfo',config)
+      this.props.navigation.navigate("Tab");
+}
+loginError=(res)=>{
+        Alert.alert('好像有点问题哦...')
+}
     // 渲染登录
 renderLogin=()=>{
   // const {phoneNumber,phoneValid}=this.state;
@@ -223,7 +229,11 @@ renderVcode=()=>{
    </View>
 </View>
 }
-
+onPressButton = (state) => {
+  this.setState({
+    disabled: state,
+  });
+};
 // 密码登录
 renderpass=()=>{
   return    <View style={styles.two}>      
@@ -235,6 +245,7 @@ renderpass=()=>{
          style={{ height: 60,fontSize:20,width:220,marginTop:15,marginBottom:0}}
          onChangeText={this.passwordChange}
          password={true}
+         secureTextEntry={true}
          // value={value}
          />
    </View>
@@ -244,6 +255,7 @@ renderpass=()=>{
     onPress={()=>this.props.navigation.navigate("Loginfive")} 
     >找回密码</Text>
    <TouchableOpacity
+   disabled={this.state.disabled}
          activeOpacity={0.7}//点击时的透明度
          style={styles.buttonone}
          //点击事件，要记得绑定

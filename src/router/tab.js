@@ -139,17 +139,22 @@ function tabIcon(isFocused, index) {
   if (index === 1) {
     return (
     <TouchableOpacity onPress={()=>{
+            console.log(RootStore.globalStore.isPlaying)
             RootStore.globalStore.setPlaying()
 }}>
+    <View onStartShouldSetResponderCapture={(ev) => false}
+    >
       <Image
         source={require('../assets/icons/playing.png')}
         style={{
           marginBottom: pxToDp(160),
-          width: pxToDp(208),
-          height: pxToDp(208),
+          width: pxToDp(218),
+          height: pxToDp(218),
+          borderTopWidth:pxToDp(140)
         }}
         resizeMode={'contain'}
       />
+    </View>
     </TouchableOpacity>
     );
   }
@@ -193,16 +198,25 @@ class Tabs extends Component {
     this.state = {KeyboardShown: true};
   }
 
-  componentDidMount() {
+  componentWillMount() {
 
     LocalStorageUtils.get('userInfo').then((userInfo) => {
+        console.log(userInfo)
       if (userInfo !== null) {
         // 1.重新获取用户信息
+        updataInfo=async function(){
+            let res=await Http.personaldata()
+            console.log(res)
+            if(res.data.code!=500){
+                let info=res.data.data
+                this.props.RootStore.userStore.infoSet(info)
+            }
+        }
+        updataInfo();
         // 2.存储到mobx中
       } else {
         // 跳转登录
         // this.props.navigate()
-        console.log(this.props.navigation)
         this.props.navigation.navigate('Logintwo')
       }
     });
@@ -272,7 +286,7 @@ const styles = StyleSheet.create({
   },
   tab_home_bg: {
     width: pxToDp(750),
-    height: pxToDp(90),
+    height: pxToDp(100),
     position: 'absolute',
     bottom: 0,
     left: 0,

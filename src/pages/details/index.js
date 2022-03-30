@@ -101,7 +101,7 @@ export default class XiangQing extends Component{
         const {navigation}=this.props;
         const {details} = this.state ;
         return (
-            <View>
+            <View style={styles.body}>
                 <View style={styles.tabNavigetion}>
                     {/* 返回按钮 */}
                     <TouchableOpacity 
@@ -133,7 +133,7 @@ export default class XiangQing extends Component{
                         source={{ html: details.text }}
                     />
                     {/* <Text style={styles.timeStyle}>{details.createAt}</Text> */}
-
+                                            <View style={{height:36}}></View>
                     </View>
                 </ScrollView>
                 <View style={styles.bottomView}>
@@ -164,6 +164,10 @@ export default class XiangQing extends Component{
 
 }
 const styles = StyleSheet.create ({
+    body:{
+    flex:1,
+    position:'relative'
+    },
     textTitle:{
         fontSize:pxToDp(32),
         marginTop:pxToDp(80),
@@ -183,21 +187,18 @@ const styles = StyleSheet.create ({
         marginRight:pxToDp(44),
     },
     bottomView:{
+        display:'flex',
         flexDirection:"row",
         justifyContent:'space-between',
         alignItems:'center',
         position:"absolute",
         width:"100%",
-        height:"8%",
+        height:80,
         left:0,
         bottom:0,
         backgroundColor:"#F5F5F5",
-        // width:pxToDp(750),
-        // height:pxToDp(100),
-        // marginTop:pxToDp(0),
         borderColor:"#E0DDDD",
         borderTopWidth: 1,
-        // position:
     },
     textInput:{
         borderRadius:15,

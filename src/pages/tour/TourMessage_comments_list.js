@@ -1,5 +1,6 @@
 import React, { useState, useRef,Component } from "react";
 import {
+    Alert,
     Image,
     ScrollView,
     StatusBar,
@@ -30,14 +31,16 @@ export default class TourMessage_comments_list extends Component {
         ],
         value:''
     };
-    this. _onPress=()=>{
+    this._onPress=()=>{
             addCommit=async function(){
                 let res=await Http.addCommit({articleId:this.props.route.params.id,comment:this.state.value})
+                console.log(res)
                 if(res.data.code==200){
-                console.log(res.data)
                     this.setState({value:''})
-                    this.gitComment().call(this)
+                    this.gitComment.call(this)
                     console.log(this.state.comments)
+                }else{
+                Alert.alert("发生了一点错误哦")
                 }
             }
             addCommit.call(this)

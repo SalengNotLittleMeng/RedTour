@@ -65,7 +65,9 @@ class Logintwo  extends Component {
             
               console.log(phoneNumber);
               let res =await  Http.hqyanzhengma({phoneNumber:phoneNumber});
-              console.log(res);
+              if(res.data.code==500){
+                 Alert.alert('好像出了一些问题哦');
+            }
             // const token =index.setToken(token);
 
             
@@ -112,7 +114,7 @@ verpress=async()=>{
   const {verphone,phoneNumber} =this.state;
   console.log(verphone);
 
-  let res =await Http.yzmyanzheng({note:verphone,number:"15235684045"});
+  let res =await Http.yzmyanzheng({note:verphone,number:phoneNumber});
   console.log(res);
   const token =res.data.data.accessToken;
   this.props.RootStore.userStore.setToken(token);
@@ -139,8 +141,8 @@ onpress=async()=>{
       this.props.RootStore.userStore.setToken(token);
         let config={'name':"redtour"}
        LocalStorageUtils.set('userInfo',config)
-     this.props.navigation.navigate("首页");
-        // LocalStorageUtils.set('token', token);
+     this.props.navigation.navigate("Tab");
+        LocalStorageUtils.set('token', token);
         // console.log(RootStore.userStore.allData.ANSWER_ACCESS_TOKEN);
 }
   

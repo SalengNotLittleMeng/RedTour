@@ -1,22 +1,21 @@
 import React, { useState,Component } from "react";
 import Video from 'react-native-video';
+import RootStore from '../../mobx/index'
 import {
     StyleSheet,
     View,
 } from 'react-native';
 import {inject,observer} from 'mobx-react'
 @inject('RootStore')
-@observer
-export default class Audio extends Component {
+@observer class Audio extends Component {
     constructor(props){
     super(props);
     this.state = {
-
+        isPlaying:RootStore.globalStore.isPlaying
     };
     }
     render(){
-    // console.log(1111111111)
-    // console.log(this.props.RootStore.globalStore.isPlaying)
+    console.log(this.state.isPlaying)
     return (
         <View style={styles.body}>
          <Video
@@ -26,7 +25,8 @@ export default class Audio extends Component {
     source={require('../../static/tour/music.mp3')}//设置视频源  
     // style={styles.fullScreen}//组件样式
     // rate={this.state.rate}//播放速率
-    paused={this.props.RootStore.globalStore.isPlaying}//暂停
+    paused={this.state.isPlaying}//暂停
+    // paused={false}//暂停
     // volume={this.state.volume}//调节音量
     muted={false}//控制音频是否静音
     // resizeMode={this.state.resizeMode}//缩放模式
@@ -37,6 +37,7 @@ export default class Audio extends Component {
     // onAudioFocusChanged={this.onAudioFocusChanged}//音频焦点丢失时的回调 - 如果焦点丢失则暂停
     repeat={true}//确定在到达结尾时是否重复播放视频。
 />   
+    <View>{RootStore.globalStore.isPlaying}</View>
         </View>
     )
 }
@@ -46,3 +47,4 @@ const styles = StyleSheet.create({
         backgroundColor:'white'
     },  
 });
+export default Audio

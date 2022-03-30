@@ -79,20 +79,24 @@ export default class TourMessage_comments_detail extends Component {
         addCommit=async function(){
             let msg=this.state.msg
             let res=await Http.replayCommitAdd({articleId:msg.articleId,comment:this.state.value,id:msg.id})
+            if(res.data.code==200){
+                this.setState({value:''})
+                this.getReplayCommit.call(this)
+            }
         }
         addCommit.call(this)
         }
+        this.getReplayCommit=async function(){
+            await this.setState({msg:this.props.route.params.msg})
+            let msg=this.state.msg
+            let res=await Http.replayCommitList({PageNum:0,articleId:msg.articleId,id:msg.id})
+            res=res.data.data.recordlist
+            console.log(res)
+            this.setState({comments:res})
+        }
     }
     componentDidMount(){
-    getReplayCommit=async function(){
-        await this.setState({msg:this.props.route.params.msg})
-        let msg=this.state.msg
-        let res=await Http.replayCommitList({PageNum:0,articleId:msg.articleId,id:msg.id})
-        res=res.data.data.recordlist
-        console.log(res)
-        this.setState({comments:res})
-    }
-        getReplayCommit.call(this)
+        this.getReplayCommit.call(this)
     }
     render(){
          let DOM = this.state.comments.map((item, index) => 

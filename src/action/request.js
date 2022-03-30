@@ -98,7 +98,7 @@ instance.interceptors.response.use(
             });
             RootStore.globalStore.allData.Socket.emit('disconnect');
             NavigationHelper.goBack();
-            NavigationHelper.navigate('LoginAndRegister');
+            NavigationHelper.navigate('Logintwo');
         }
         console.log('请求错误', err.response);
     },

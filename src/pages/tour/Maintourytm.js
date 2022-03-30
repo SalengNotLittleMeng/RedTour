@@ -13,7 +13,6 @@ import {
     Text,
     View,
 } from 'react-native';
-import axios from 'axios';
 import {inject,observer,action} from 'mobx-react'
 @inject('RootStore')
 @observer

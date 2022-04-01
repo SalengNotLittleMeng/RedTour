@@ -25,6 +25,7 @@
     "prop-types": "^15.7.2",
     "react": "16.13.1",
     "react-native": "0.63.4",
+    "react-native-amap3d": "^3.0.7",
     "react-native-datepicker": "^1.7.2",
     "react-native-elements": "^3.4.2",
     "react-native-fs": "^2.17.0",

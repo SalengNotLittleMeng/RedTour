@@ -32,6 +32,7 @@ export default class Search1 extends Component {
             hotTagsArr: [],// 热门搜索标签数组
             pageNum:0,// 默认页码
             searchResult:[],//搜索结果数组
+            isLoadding:false,//分页
         };
     }
     componentDidMount() {
@@ -88,9 +89,10 @@ export default class Search1 extends Component {
             axios.post(`http://49.233.252.20:8085/select/${this.state.keyword}`,{
                 pageNum:this.state.pageNum
             }).then(res=>{
-                console.log(res.data.data)
+                // console.log(res.data.data)
                 this.setState({searchResult:res.data.data})
-                console.log(this.state.searchResult)
+                this.state.isLoadding=false;
+                // console.log(this.state.searchResult)
             },function(err){console.log(err)})
             //对接结束
         }
@@ -165,6 +167,17 @@ export default class Search1 extends Component {
                 }
             }
         }
+        //以当前keyword继续发起请求（分页器）
+        keywordContinueRequest=()=>{
+            this.setState({isPostList: true})
+            axios.post(`http://49.233.252.20:8085/select/${this.state.keyword}`,{
+                pageNum:this.state.pageNum++
+            }).then(res=>{
+                console.log(res.data.data)
+                this.setState({searchResult:res.data.data})
+                console.log(this.state.searchResult)
+            },function(err){console.log(err)})
+        }
         //滚顶条触底事件
         onEndReached=()=>{
             // console.log("onEndReached") 
@@ -174,8 +187,7 @@ export default class Search1 extends Component {
             }else{
                 // 还有下一页数据
                 this.state.isLoadding=true;
-                this.state.pageNum++;
-                this.getRecomment();
+                this.keywordContinueRequest();
             }
         }    
     
@@ -241,6 +253,7 @@ export default class Search1 extends Component {
                             handleMethod = {({viewableItems}) => this.handleViewableItemsChanged(viewableItems)}
                             extraData={this.state}
                             refreshing={true}
+                            style={styles.scrollView}
                                 onEndReached={this.onEndReached}
                                 onEndReachedThreshold={0.1}
                                 data={searchResult}
@@ -251,9 +264,9 @@ export default class Search1 extends Component {
                                     navigation.navigate('Details',{id:this.state.searchResult[index].id})}} 
                                 >
                                     {item.cover_url=="" ? 
-                                    <View key={index} style={{height:pxToDp(362),backgroundColor:"#FFFFFF",marginTop:pxToDp(34),borderRadius:10,borderBottomColor:'red'}}>
+                                    <View key={index} style={{height:pxToDp(362),backgroundColor:"#FFFFFF",marginTop:pxToDp(34),borderRadius:10}}>
                                         {/* 景点名称 */}
-                                        <Text style={{fontSize:pxToDp(32),marginLeft:pxToDp(40),marginTop:pxToDp(32)}}>{item.name}</Text>
+                                        <Text style={{fontSize:pxToDp(32),marginLeft:pxToDp(30),marginTop:pxToDp(32)}}>{item.name}</Text>
                                         {/* 景点图片 */}
                                         <Image style={{width:pxToDp(286),height:pxToDp(191),marginLeft:pxToDp(34),marginTop:pxToDp(34)}} source={{uri:item.cover_url}} />
                                         {/* 景点简介 */}
@@ -272,16 +285,15 @@ export default class Search1 extends Component {
                                             </View>
                                     </View>
                                     : 
-                                    <View key={index} style={{height:pxToDp(320),backgroundColor:"#FFFFFF",marginTop:pxToDp(34),borderRadius:10}}>
+                                    <View key={index} style={{height:pxToDp(240),backgroundColor:"#FFFFFF",marginTop:pxToDp(34),borderRadius:15,}}>
                                         {/* 景点名称 */}
-                                        <Text style={{fontSize:pxToDp(36),marginLeft:pxToDp(60),marginTop:pxToDp(32),fontWeight:'bold'}}>{item.name}</Text>
+                                        <Text style={{fontSize:pxToDp(32),marginLeft:pxToDp(30),marginTop:pxToDp(32)}}>{item.name}</Text>
                                         {/* 景点简介 */}
-                                        {/* {item.introduce} */}
-                                        <Text numberOfLines={2} ellipsizeMode="tail" style={{fontSize:pxToDp(28),marginTop:pxToDp(-242),marginLeft:pxToDp(60),marginRight:pxToDp(32)}}>'10小时前推送了新的提交到 master 分支，07b3d2e...402a06e'</Text>
+                                        <Text numberOfLines={2} ellipsizeMode="tail" style={{fontSize:pxToDp(28),marginTop:pxToDp(10),marginLeft:pxToDp(30),marginRight:pxToDp(32)}}>        {item.introduce} </Text>
                                             <View  style={{flexDirection:"row", position: 'absolute',}}>
                                                 {/* 景点地址 */}
                                                 <View>
-                                                    <Image style={{width:pxToDp(24),height:pxToDp(24),marginLeft:pxToDp(58),marginTop:pxToDp(320)}} source={require('../../static/img/dingWei.png')} />
+                                                    <Image style={{width:pxToDp(24),height:pxToDp(24),marginLeft:pxToDp(58),marginTop:pxToDp(190)}} source={require('../../static/img/dingWei.png')} />
                                                     <Text style={{fontSize:pxToDp(20),marginLeft:pxToDp(92),marginTop:pxToDp(-24)}}>{item.location}</Text>
                                                 </View>
                                                 {/* 景点数据 */}
@@ -395,12 +407,12 @@ const styles = StyleSheet.create({
         height: 1,
         marginLeft: 5,
         marginRight: 5,
-        backgroundColor: '#f1f1f1',
+        backgroundColor: '#E7E7E7',
         marginTop: 10,
     },
     scrollView: {
         // marginTop:200,
-
+        backgroundColor: '#E7E7E7',
     },
     listView: {
         flex: 1,

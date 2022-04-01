@@ -10,6 +10,7 @@ import Maintourytm from '../pages/tour/Maintourytm'
 import TourMessage from '../pages/tour/TourMessage'
 import TourMessage_comments_list from '../pages/tour/TourMessage_comments_list'
 import TourMessage_comments_detail from '../pages/tour/TourMessage_comments_detail'
+import TourMap from '../pages/tour/TourMap/TourMap'
 
 // 留几处作为参考
 // ---------------个人中心----------------
@@ -206,7 +207,11 @@ class Nav extends Component {
                 component={TourMessage_comments_list} 
                 options={{headerShown: false}}
             />
-       
+             <Stack.Screen 
+                name="TourMap" 
+                component={TourMap} 
+                options={{headerShown: false}}
+            />
         </Stack.Navigator>
       </NavigationContainer>
     );

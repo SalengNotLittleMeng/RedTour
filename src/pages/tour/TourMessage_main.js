@@ -5,6 +5,7 @@ import {
     StyleSheet,
     Text,
     View,
+    TouchableOpacity
 } from 'react-native';
 export default class TourMessage_main extends Component {
     constructor(props){
@@ -82,6 +83,7 @@ export default class TourMessage_main extends Component {
                             <View style={styles.common_flex}><Text style={styles.appraise_word}>12345</Text><Text style={styles.appraise_word}>条点评</Text></View>
                         </View>
                     {/* <View style={{flex:1,height:1,backgroundColor:'#707070'}}></View> */}
+                <TouchableOpacity onPress={()=>{this.props.value.navigation.push('TourMap')}}>
                     <View style={styles.map_box}>
                         <Text style={styles.map_name}>{this.state.msg.location}</Text>
                         <Text style={styles.map_manner}>距826路后湾站2.2km，步行7min</Text>
@@ -92,6 +94,7 @@ export default class TourMessage_main extends Component {
                             <Text style={{color:'#707070',fontSize:15,position:'absolute',left:290,top:35}}>地图·周边</Text>
                         </View>
                     </View>
+                </TouchableOpacity>
                     <View style={styles.brief_box}>
                             <Text style={styles.brief_title}>景点简介</Text>
                                 <Text style={styles.brief_content}>

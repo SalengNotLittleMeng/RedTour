@@ -28,9 +28,6 @@ export default class TourMessage extends Component {
     this.state = {
         msg:{
         articleContentDtos:[
-        // {articleId: "1", articleContent: "标题1", articleContentText: "4586"},
-        //  {articleId: "1", articleContent: "标题1", articleContentText: "4586"},
-        //  {articleId: "1", articleContent: "标题1", articleContentText: "4586"},
         ],
         commentsDtos: [],
         id: "1",
@@ -57,7 +54,7 @@ export default class TourMessage extends Component {
     return (
         <View style={styles.body}>
              <ScrollView style={{height:800}}>
-                <TourMessage_main msg={this.state.msg}></TourMessage_main>
+                <TourMessage_main msg={this.state.msg} value={this.props} ></TourMessage_main>
                 <TourMessage_news value={this.props} msg={this.state.msg}></TourMessage_news>
                 <TourMessage_comments value={this.props.navigation} msg={this.state.msg}></TourMessage_comments>
                 <TourMessage_other></TourMessage_other>

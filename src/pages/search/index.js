@@ -11,7 +11,8 @@ import {
     Alert,
     flex,
     TouchableOpacity,
-    BaseComponent  
+    BaseComponent,
+    FlatList
     
 } from 'react-native';
 // import { withNavigation } from 'react-navigation';
@@ -30,6 +31,7 @@ export default class Search1 extends Component {
             searchHistory: [],// 搜索历史数组
             hotTagsArr: [],// 热门搜索标签数组
             pageNum:0,// 默认页码
+            searchResult:[],//搜索结果数组
         };
     }
     componentDidMount() {
@@ -77,15 +79,18 @@ export default class Search1 extends Component {
             } else {
                 // Toast.message('请输入搜索关键字', null, 'center')
             }
-           await this.setState({keyword: newVal});
+            await this.setState({keyword: newVal});
             //对接开始
 // 这里是搜索的对接部分
 // 测试的时候把下面这行注释取消掉，将keyword改成'逸'，能够搜索出数据
-            // this.setState({keyword:'逸'})
-             axios.post(`http://49.233.252.20:8085/select/${this.state.keyword}`,{
+            this.setState({keyword:'逸'})
+            this.setState({isPostList: true})
+            axios.post(`http://49.233.252.20:8085/select/${this.state.keyword}`,{
                 pageNum:this.state.pageNum
-            }).then(function(res){
-                console.log(res)
+            }).then(res=>{
+                console.log(res.data.data)
+                this.setState({searchResult:res.data.data})
+                console.log(this.state.searchResult)
             },function(err){console.log(err)})
             //对接结束
         }
@@ -160,10 +165,23 @@ export default class Search1 extends Component {
                 }
             }
         }
-    
+        //滚顶条触底事件
+        onEndReached=()=>{
+            // console.log("onEndReached") 
+            // 判断是否有下一页数据以及节流阀
+            if(this.state.isLoadding){
+                return;
+            }else{
+                // 还有下一页数据
+                this.state.isLoadding=true;
+                this.state.pageNum++;
+                this.getRecomment();
+            }
+        }    
     
     render() {
         const {navigation}=this.props
+        const {searchResult}=this.state
         return (
 
             <View style={styles.container}>
@@ -209,14 +227,80 @@ export default class Search1 extends Component {
                 {
                     (this.state.isPostList) ?
                         //列表
-                        <ScrollView style={styles.scrollView}>
-                            <View style={styles.listView}>
+                        // <ScrollView style={styles.scrollView}>
+                        //     <View style={styles.listView}>
+                        //         {searchResult.map((item,index)=><View key={index}>
+                        //             <Text style={{fontSize:pxToDp(40),backgroundColor:'#DADADA',color:"#333333",marginLeft:10,marginRight:10,paddingLeft:10,paddingRight:10}}>
+                        //                 {item.name}
+                        //             </Text>
+                        //         </View>)}
+                        //     </View>
+                        // </ScrollView>
+                        <>
+                            <FlatList
+                            handleMethod = {({viewableItems}) => this.handleViewableItemsChanged(viewableItems)}
+                            extraData={this.state}
+                            refreshing={true}
+                                onEndReached={this.onEndReached}
+                                onEndReachedThreshold={0.1}
+                                data={searchResult}
+                                keyExtractor={item => item.id}
+                                renderItem={({item,index})=>
+                                <>
+                                <TouchableOpacity onPress={()=>{
+                                    navigation.navigate('Details',{id:this.state.searchResult[index].id})}} 
+                                >
+                                    {item.cover_url=="" ? 
+                                    <View key={index} style={{height:pxToDp(362),backgroundColor:"#FFFFFF",marginTop:pxToDp(34),borderRadius:10,borderBottomColor:'red'}}>
+                                        {/* 景点名称 */}
+                                        <Text style={{fontSize:pxToDp(32),marginLeft:pxToDp(40),marginTop:pxToDp(32)}}>{item.name}</Text>
+                                        {/* 景点图片 */}
+                                        <Image style={{width:pxToDp(286),height:pxToDp(191),marginLeft:pxToDp(34),marginTop:pxToDp(34)}} source={{uri:item.cover_url}} />
+                                        {/* 景点简介 */}
+                                        <Text numberOfLines={6} ellipsizeMode="tail" style={{fontSize:pxToDp(28),marginTop:pxToDp(-232),marginLeft:pxToDp(356),marginRight:pxToDp(32)}}>        {item.introduce} </Text>
+                                            <View  style={{flexDirection:"row", position: 'absolute',}}>
+                                                {/* 景点地址 */}
+                                                <View>
+                                                    <Image style={{width:pxToDp(24),height:pxToDp(24),marginLeft:pxToDp(58),marginTop:pxToDp(320)}} source={require('../../static/img/dingWei.png')} />
+                                                    <Text style={{fontSize:pxToDp(20),marginLeft:pxToDp(92),marginTop:pxToDp(-24)}}>{item.location}</Text>
+                                                </View>
+                                                {/* 景点数据 */}
+                                                {/* <View style={{flexDirection:"row"}}>
+                                                    <Text style={{fontSize:pxToDp(20),marginLeft:pxToDp(58),marginTop:pxToDp(320),marginLeft:pxToDp(400)}}>{item.views}浏览</Text>
+                                                    <Text style={{fontSize:pxToDp(20),marginTop:pxToDp(320),marginLeft:pxToDp(10)}}>{item.commentNum}评论</Text>
+                                                </View> */}
+                                            </View>
+                                    </View>
+                                    : 
+                                    <View key={index} style={{height:pxToDp(320),backgroundColor:"#FFFFFF",marginTop:pxToDp(34),borderRadius:10}}>
+                                        {/* 景点名称 */}
+                                        <Text style={{fontSize:pxToDp(36),marginLeft:pxToDp(60),marginTop:pxToDp(32),fontWeight:'bold'}}>{item.name}</Text>
+                                        {/* 景点简介 */}
+                                        {/* {item.introduce} */}
+                                        <Text numberOfLines={2} ellipsizeMode="tail" style={{fontSize:pxToDp(28),marginTop:pxToDp(-242),marginLeft:pxToDp(60),marginRight:pxToDp(32)}}>'10小时前推送了新的提交到 master 分支，07b3d2e...402a06e'</Text>
+                                            <View  style={{flexDirection:"row", position: 'absolute',}}>
+                                                {/* 景点地址 */}
+                                                <View>
+                                                    <Image style={{width:pxToDp(24),height:pxToDp(24),marginLeft:pxToDp(58),marginTop:pxToDp(320)}} source={require('../../static/img/dingWei.png')} />
+                                                    <Text style={{fontSize:pxToDp(20),marginLeft:pxToDp(92),marginTop:pxToDp(-24)}}>{item.location}</Text>
+                                                </View>
+                                                {/* 景点数据 */}
+                                                {/* <View style={{flexDirection:"row"}}>
+                                                    <Text style={{fontSize:pxToDp(20),marginLeft:pxToDp(58),marginTop:pxToDp(320),marginLeft:pxToDp(400)}}>{item.views}浏览</Text>
+                                                    <Text style={{fontSize:pxToDp(20),marginTop:pxToDp(320),marginLeft:pxToDp(10)}}>{item.commentNum}评论</Text>
+                                                </View> */}
+                                            </View>
+                                    </View>
+                                        }
+                                </TouchableOpacity>                                                           
 
-                            </View>
-                        </ScrollView>
+                                    {item==null?<View><Text>没有更多了</Text></View>:<></> }
+                                </>}
+                            />
+                        </>
                         :
                         //历史和热门
-                        <ScrollView style={styles.scrollView}>
+                        <ScrollView >
                             <View style={styles.head1}>
                                 <Text style={{fontSize: pxToDp(28), color: "#333"}}>{"搜索历史"}</Text>
                                 <TouchableOpacity activeOpacity={0.3} onPress={() => this._deleteHistory()}>
@@ -314,10 +398,10 @@ const styles = StyleSheet.create({
         backgroundColor: '#f1f1f1',
         marginTop: 10,
     },
-    // scrollView: {
-    //     marginTop:200,
-    //     backgroundColor:'red'
-    // },
+    scrollView: {
+        // marginTop:200,
+
+    },
     listView: {
         flex: 1,
         flexDirection: 'row',
@@ -325,6 +409,7 @@ const styles = StyleSheet.create({
         marginLeft: 0,
         marginRight: 0,
         marginTop: 10,
+        // backgroundColor:'red',
     },
     head1: {
         paddingHorizontal: pxToDp(29),

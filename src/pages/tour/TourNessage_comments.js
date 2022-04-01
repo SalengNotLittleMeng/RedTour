@@ -7,13 +7,8 @@ import {
     PanResponder,
     TouchableOpacity,
     Image,
-    SafeAreaView,
-    ScrollView,
-    StatusBar,
     StyleSheet,
     Text,
-    useColorScheme,
-    TextInput,
     View,
     Button,
     ImageBackground
@@ -23,12 +18,6 @@ export default class TourMessage_comments extends Component {
     super(props);
     this.state = {
   comments:[{
-        userName:'游客',
-        userImg:'https://roy-tian.github.io/learning-area/extras/getting-started-web/beginner-html-site/images/firefox-icon.png',
-        comment: "加载中",
-        updateAt: "2021-10-26 21:44:09",
-        likeNumber: 0
-        },{
         userName:'游客',
         userImg:'https://roy-tian.github.io/learning-area/extras/getting-started-web/beginner-html-site/images/firefox-icon.png',
         comment: "加载中",
@@ -59,7 +48,7 @@ export default class TourMessage_comments extends Component {
     return (
         <View style={styles.body}>
             <View  style={styles.comments_box}>
-                <Text style={styles.comments_title}>用户点评<Text style={{fontSize:16,fontWeight:'normal'}}> (1128)</Text></Text>
+                <Text style={styles.comments_title}>用户点评<Text style={{fontSize:16,fontWeight:'normal'}}> ({this.state.comments.length})</Text></Text>
                     <Text style={styles.get_more}  onPress={this._onPress} >查看全部 &gt;</Text>
                 <Text style={{fontSize:16,marginLeft:15,marginBottom:10}}>
                         <Text style={{color:'#AC2910',fontSize:28,marginBottom:20}}>4.9</Text>/5分</Text>

@@ -41,12 +41,13 @@ export default class TourMessage extends Component {
         }
     }
     render(){
+       const msg=this.props.msg
     return (
         <View style={styles.body}>
            <View style={styles.comments_content}>
           <TouchableOpacity onPress={this._onPress}>
                 <View>
-              <Image style={styles.headImage} source={{uri:this.state.comments.userImg}} />
+              <Image style={styles.headImage} source={{uri:msg.userImg?msg.userImg:this.props.msg.fromImg}} />
                 <Text style={styles.comments_name}>{this.props.msg.userName}</Text>
                 <Text style={styles.comments_main}> <Text>&emsp;&emsp;</Text>{this.props.msg.comment}</Text>
                     <View style={styles.comments_img_box}>

@@ -1,5 +1,5 @@
+import { func } from "prop-types";
 import React, { useState, useRef,Component } from "react";
-import axios from 'axios';
 import {
     Alert,
     TouchableOpacity,
@@ -10,13 +10,16 @@ import {
     Text,
     View,
     TextInput,
+     Keyboard
 } from 'react-native';
 import TourMessage_comments_item from'./TourMessage_comments_item'
+let commitId='111'
 class Calllist extends Component{
     render(){
+        console.log(this.props.msg)
         return(
             <View style={styles.list_bg}>
-                <Text><Text style={{color:'#AC2910'}}>抬头捉月光</Text> 回复 <Text style={{color:'#AC2910'}}>匿名用户</Text>：大家互相学习，一起进步</Text>
+                <Text><Text style={{color:'#AC2910'}}>{this.props.msg.fromName}</Text> 回复 <Text style={{color:'#AC2910'}}>{this.props.msg.toName}</Text>：{this.props.msg.comment}</Text>
             </View>
         )
     }
@@ -27,28 +30,36 @@ class Commentsbox extends Component{
     this.state={
         islove:false
         }
+    this.onPressItem=()=>{
+        this.props.eventDom&&this.props.eventDom.focus()
+        commitId=this.props.msg.commentId
+    }
     this.setLove=()=>{
         this.setState({islove:!this.state.islove})
     }
     }
         render(){
-        //  let DOM = this.props.msg.reply.map((item, index) => 
-        //     <Calllist key={index} msg={this.props.msg.reply[index]}></Calllist>)
+         let DOM = this.props.msg.commentsReplyDtos3?this.props.msg.commentsReplyDtos3.map((item, index) => 
+            <Calllist key={index} msg={this.props.msg.commentsReplyDtos3[index]}></Calllist>):<View></View>
     return (
             <View  style={styles.comments_content}>
-                    <Image style={styles.headImage} source={this.props.msg.fromImg} />
-                <Text style={styles.comments_name}>{this.props.msg.fromName}</Text>
-                <View style={{display:'flex',flexDirection:'row',position:'absolute',left:300,top:25}}>
-                <TouchableOpacity onPress={this.setLove}>
-                <Image style={styles.love} 
-                source={this.state.islove?
-                    require('../../static/tour/detail/little_redlove.png')
-                    :require('../../static/tour/detail/little_whitelove.png')}/>
-                </TouchableOpacity>
-                <Text style={{fontSize:16,marginLeft:10,color:"#999999",position:'relative',top:-2}}></Text>
+                    <TouchableOpacity onPress={this.onPressItem}>
+                <View>
+                    <Image style={styles.headImage} source={{uri:this.props.msg.fromImg}} />
+                    <Text style={styles.comments_name}>{this.props.msg.fromName}</Text>
+                        <View style={{display:'flex',flexDirection:'row',position:'absolute',left:300,top:25}}>
+                            <TouchableOpacity onPress={this.setLove}>
+                                <Image style={styles.love} 
+                                source={this.state.islove?
+                                    require('../../static/tour/detail/little_redlove.png')
+                                    :require('../../static/tour/detail/little_whitelove.png')}/>
+                            </TouchableOpacity>
+                        <Text style={{fontSize:16,marginLeft:10,color:"#999999",position:'relative',top:-2}}></Text>
+                        </View>
+                    <Text style={styles.comments_main}> <Text>&emsp;&emsp;</Text>{this.props.msg.comment}</Text> 
                 </View>
-                <Text style={styles.comments_main}> <Text>&emsp;&emsp;</Text>{this.props.msg.comment}</Text> 
-                 {/* {DOM} */}
+                </TouchableOpacity>
+                 {DOM}
             </View>
     )
 }
@@ -56,51 +67,48 @@ class Commentsbox extends Component{
 export default class TourMessage_comments_detail extends Component {
     constructor(props){
     super(props);
+    this.keyboardDidHideListener = null;
     this.state = {
         value:'',
-        msg:{
-        userName:'游客15364577709',
-        UserImg:require('../../static/tour/detail/center.png'),
-        comment:'传统文化艺术在世界文明数千年的历史长河中，以其鲜明的个性和艺术特色洋溢着中华文明的民族特性，是中华文明的大旗。',
-        time:'2020-9-10',
-        articleId:'1',
-        },
-         comments:[{
-        name:'游客15364577709',
-        headimg:require('../../static/tour/detail/center.png'),
-        content:'传统文化艺术在世界文明数千年的历史长河中，以其鲜明的个性和艺术特色洋溢着中华文明的民族特性，是中华文明的大旗。',
-        time:'2020-9-10',
-        image:[],
-        reply:[{fir:'抬头捉月光',sec:'匿名用户',content:'：大家互相学习，一起进步'}]
-        },],
+        msg:{},
+         comments:[],
         value:''
     };
-    this. _onPress=()=>{
+    this._onPress=()=>{
+        if(this.state.value==''){
+            Alert.alert('输入不能为空哦')
+            return
+        }
         addCommit=async function(){
             let msg=this.state.msg
-            let res=await Http.replayCommitAdd({articleId:msg.articleId,comment:this.state.value,id:msg.id})
+            let res=await Http.replayCommitAdd({articleId:msg.articleId,comment:this.state.value,id:commitId})
+            console.log(res)
             if(res.data.code==200){
                 this.setState({value:''})
                 this.getReplayCommit.call(this)
             }
         }
         addCommit.call(this)
+        commitId=this.state.msg.id
         }
         this.getReplayCommit=async function(){
             await this.setState({msg:this.props.route.params.msg})
             let msg=this.state.msg
             let res=await Http.replayCommitList({PageNum:0,articleId:msg.articleId,id:msg.id})
-            res=res.data.data.recordlist
-            console.log(res)
+                console.log(res)
+            res=res.data.data
             this.setState({comments:res})
         }
     }
     componentDidMount(){
+        commitId=this.state.msg.id
         this.getReplayCommit.call(this)
+        this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide',
+       commitId=this.state.msg.id );
     }
     render(){
          let DOM = this.state.comments.map((item, index) => 
-            <Commentsbox key={index} item={this.props.navigation} msg={this.state.comments[index]}></Commentsbox>)
+            <Commentsbox key={index} item={this.props.navigation} msg={this.state.comments[index]} eventDom={this.refs.commitInput}></Commentsbox>)
     return (
         <View style={styles.body}>
             <View style={{flex:1}}>
@@ -124,6 +132,7 @@ export default class TourMessage_comments_detail extends Component {
             </View>
             <View style={styles.buttom_box}>
                 <TextInput placeholder="说说你的看法..." 
+                ref='commitInput'
                 style={styles.input}
                 onChangeText={text =>{this.setState({value:text})}}
                 value={this.state.value}
@@ -208,6 +217,10 @@ const styles = StyleSheet.create({
         lineHeight:25,
         marginBottom:10,
     },
+    love:{
+        position:'relative',
+        left:20
+    },  
         headImage:{
              width: 60,
             height: 60,

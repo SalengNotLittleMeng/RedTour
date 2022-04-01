@@ -83,11 +83,10 @@ export default class TourMessage_main extends Component {
                             <View style={styles.common_flex}><Text style={styles.appraise_word}>12345</Text><Text style={styles.appraise_word}>条点评</Text></View>
                         </View>
                     {/* <View style={{flex:1,height:1,backgroundColor:'#707070'}}></View> */}
-                <TouchableOpacity onPress={()=>{this.props.value.navigation.push('TourMap')}}>
+                <TouchableOpacity onPress={()=>{this.props.value.navigation.push('TourMap',{msg:this.state.msg})}}>
                     <View style={styles.map_box}>
-                        <Text style={styles.map_name}>{this.state.msg.location}</Text>
-                        <Text style={styles.map_manner}>距826路后湾站2.2km，步行7min</Text>
-                        <View style={{position:'relative',top:-55}}>
+                        <Text style={styles.map_manner}>{this.state.msg.location}</Text>
+                        <View style={{position:'relative',top:-30}}>
                             <View style={styles.map_round}>
                                 <Image style={styles.map_icon} source={require('../../static/tour/detail/location_icon.png')}/>
                             </View>
@@ -181,12 +180,8 @@ const styles = StyleSheet.create({
         borderTopColor:'#707070',
         borderTopWidth:0.5
     },
-    map_name:{
-        marginLeft:15,
-        fontSize:18,
-    },
     map_manner:{
-        marginLeft:15,
+        marginLeft:20,
         fontSize:16,
         color:'#999999',
         marginTop:5,

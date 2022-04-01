@@ -20,9 +20,10 @@ export default class TourMap extends Component {
         }
     }
     render(){
+    console.log(this.props)
+    const msg =this.props.route.params.msg
     return (
         <View>
-        <View><Text>地图！！！！！</Text></View>
         <MapView
         style={StyleSheet.absoluteFill}
         style={styles.mainMap}
@@ -35,12 +36,12 @@ export default class TourMap extends Component {
             zoom: 8,
         }}
         />
-        <View style={{position:'relative'}}><Text style={styles.mainTitle}>太原理工大学</Text>
+        <View style={{position:'relative'}}><Text style={styles.mainTitle}>{msg.name}</Text>
             <Image style={styles.localIcon} source={require('../../../static/img/dingWei.png')}/>
         </View>
         <View style={styles.titleLine}></View>
         <Text style={styles.secTitle}>景区位置：</Text>
-        <Text style={styles.detail}>&emsp;&emsp;&ensp;太原理工大学学院/大学 万柏林区迎泽西大街79号, 太原市</Text>
+        <Text style={styles.detail}>&emsp;&emsp;&ensp;{msg.location}</Text>
         <View></View>
         </View>
     )

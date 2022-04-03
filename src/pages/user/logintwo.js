@@ -114,9 +114,7 @@ verpress=async()=>{
   console.log(verphone);
 
   let res =await Http.yzmyanzheng({note:verphone,number:phoneNumber});
-  console.log(res);
-  const token =res.data.data.accessToken;
-  this.props.RootStore.userStore.setToken(token);
+res.data&&res.data.code==200?this.loginSuccee(res):this.loginError(res)
               // AsyncStorage.setItem("userinfo",JSON.stringify({
               //   token:res.data.token, 
               // }))

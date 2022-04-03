@@ -147,7 +147,7 @@ function tabIcon(isFocused, index) {
       <Image
         source={require('../assets/icons/playing.png')}
         style={{
-          marginBottom: pxToDp(160),
+          marginBottom: pxToDp(180),
           width: pxToDp(218),
           height: pxToDp(218),
           borderTopWidth:pxToDp(140)
@@ -286,7 +286,7 @@ const styles = StyleSheet.create({
   },
   tab_home_bg: {
     width: pxToDp(750),
-    height: pxToDp(100),
+    height: pxToDp(120),
     position: 'absolute',
     bottom: 0,
     left: 0,
@@ -308,7 +308,7 @@ const styles = StyleSheet.create({
     // marginBottom: pxToDp(10),
   },
   item_text: {
-    marginBottom: pxToDp(25),
+    marginBottom: pxToDp(30),
     ...fontStyle(22, 22, 24, 'normal', '#888', 'center'),
   },
 });

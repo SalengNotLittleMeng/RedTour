@@ -36,7 +36,7 @@ export default class Search1 extends Component {
         };
     }
     componentDidMount() {
-        this._getHotWords()
+       this._getHistory() 
     }
     componentWillMount() {}
 
@@ -84,7 +84,7 @@ export default class Search1 extends Component {
             //对接开始
 // 这里是搜索的对接部分
 // 测试的时候把下面这行注释取消掉，将keyword改成'逸'，能够搜索出数据
-            this.setState({keyword:'逸'})
+            // this.setState({keyword:'逸'})
             this.setState({isPostList: true})
             axios.post(`http://49.233.252.20:8085/select/${this.state.keyword}`,{
                 pageNum:this.state.pageNum
@@ -136,7 +136,8 @@ export default class Search1 extends Component {
         //获取历史记录
         _getHistory() {
             // 查询本地历史
-            getItems("searchHistory").then(data => {
+            LocalStorageUtils.get("searchHistory").then(data => {
+            data=data.value
                 if (data == null) {
                     this.setState({
                         searchHistory: [],
@@ -156,7 +157,8 @@ export default class Search1 extends Component {
                 if (this.state.searchHistory.indexOf(text) != -1) {
                     // 本地历史 已有 搜索内容
                     let index = this.state.searchHistory.indexOf(text);
-                    let tempArr = arrDelete(this.state.searchHistory, index)
+                    let tempArr = this.state.searchHistory 
+                    tempArr.splice(index,1)
                     tempArr.unshift(text);
                     LocalStorageUtils.set("searchHistory", tempArr);
                 } else {
@@ -261,7 +263,7 @@ export default class Search1 extends Component {
                                 renderItem={({item,index})=>
                                 <>
                                 <TouchableOpacity onPress={()=>{
-                                    navigation.navigate('Details',{id:this.state.searchResult[index].id})}} 
+                                    navigation.navigate('TourMessage',{id:this.state.searchResult[index].id})}} 
                                 >
                                     {item.cover_url=="" ? 
                                     <View key={index} style={{height:pxToDp(362),backgroundColor:"#FFFFFF",marginTop:pxToDp(34),borderRadius:10}}>
@@ -306,7 +308,7 @@ export default class Search1 extends Component {
                                         }
                                 </TouchableOpacity>                                                           
 
-                                    {item==null?<View><Text>没有更多了</Text></View>:<></> }
+                                    {item==null?<View><Text style={{color:'black'}}>没有更多了</Text></View>:<></> }
                                 </>}
                             />
                         </>

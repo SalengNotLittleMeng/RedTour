@@ -10,7 +10,8 @@ import {
     ScrollView,
     Alert,
     flex,
-    TouchableOpacity
+    TouchableOpacity,
+    Dimensions
     
 } from 'react-native';
 
@@ -19,6 +20,12 @@ import { WebView } from 'react-native-webview';
 // import request from "../request"
 // import { BASE_URI,XQ_PAGE,ARTICLE_LIKE } from '../pathMap';
 import axios from 'axios';
+
+import {
+    user_like_1,
+    user_like_2
+} from '../../constants/svg';
+import Svg from 'react-native-svg-uri';
 
 import { NavigationContext } from '@react-navigation/native';
 
@@ -35,16 +42,18 @@ export default class XiangQing extends Component{
             like: true,
             Collection: true,
             details:{},
-            token : "ANSWER9F0445E1f3314Fd5b34AEd4A0C03B497",
+            PageNum:1
         }; 
         id = this.props.route.params.id;
+        
     } 
     // componentWillMount(){
     //     this.transmitId();
     // }
     componentDidMount(){
         this.transmitId();
-        this.likeFun();
+        this.itLike();
+        this.itCollection();
     }
 
     //传递ID获取详情
@@ -57,51 +66,66 @@ export default class XiangQing extends Component{
     }
     //文章点赞函数
     likeFun=async()=>{
-        // console.log(id);
-        // alert("nihao")
-        this.setState({ 
-            like: !this.state.like,
-        }) 
-        // axios.post("http://49.233.252.20:8085/like/insterlike",{headers:{token:"ANSWER7683673E5305485C908408BdE975108d"}}).then(res=>{
-        //     console.log(res)
-        //     console.log(token)
-        // },err=>{console.log(err)})
 
-        // axios({
-        //     method:"post",
-        //     url:"http://49.233.252.20:8085/like/insterlike",
-        //     header:{
-        //         token:this.state.token
-        //     },
-        //     id:id
-        // }).then(data=>{
-        //         console.log(data)
-        //         console.log(token)
-        //         console.log(id)
-        //     },err=>{console.log(err),console.log(this.state.token),console.log(id)})
-
-        let res=await Http.userDZ({id})
+        let res=await Http.userDZ({articleId:id})
         console.log(res)
+        if(res.data.code!=-1){
+            console.log("喜欢成功")
+            this.setState({ 
+                like: !this.state.like,
+            }) 
+        }else{
+            console.log("失败")
+        }
     }
     //判断用户是否点赞函数
     itLike=async()=>{
-        console.log(id);
-        axios.post("http://49.233.252.20:8085/like/insterlike",{id,token:"ANSWER7683673E5305485C908408BdE975108d"}).then(res=>{
-            console.log(res) 
-        })
+        let res=await Http.userItDZ({articleId:id,PageNum:this.state.PageNum})
+        console.log(res.data.data.status)
+        if(res.data.data.status==0){
+            this.setState({ 
+                like: true,
+            }) 
+        }else{
+            this.setState({ 
+                like: false,
+            }) 
+        }
     }
-    //跳转详情点击函数
-    jumpToPLPage=async(id)=>{
-        console.log(id);
-       // axios.post(BASE_URI+JUMPTO_XQ,id)
-        this.props.navigate('Comment')
-    }
+    //文章收藏函数
+    CollectionFun=async()=>{
 
+        let res=await Http.userSC({articleId:id})
+        console.log(res)
+        if(res.data.code!=-1){
+            console.log("收藏成功")
+            this.setState({ 
+                Collection: !this.state.Collection,
+            }) 
+        }else{
+            console.log("失败")
+        }
+    }
+    //判断用户是否收藏函数
+    itCollection=async()=>{
+        let res=await Http.userItSC({articleId:id,PageNum:this.state.PageNum})
+        console.log(res.data.data.status)
+        if(res.data.data.status==0){
+            this.setState({ 
+                Collection: true,
+            }) 
+        }else{
+            this.setState({ 
+                Collection: false,
+            }) 
+        }
+    }
     render(){
         const {navigation}=this.props;
         const {details} = this.state ;
+        var windowHeight = Dimensions.get('window').height*0.88;
         return (
-            <View style={styles.body}>
+            <View>
                 <View style={styles.tabNavigetion}>
                     {/* 返回按钮 */}
                     <TouchableOpacity 
@@ -113,15 +137,12 @@ export default class XiangQing extends Component{
                     {/* 文章标题 */}
                     <Text style={styles.title}>{details.articleTitle} </Text>
                     {/* 分享按钮 */}
-                    <TouchableOpacity 
-                        onPress={()=>{
-                            // navigation.goBack()
-                        }}>
+                    <TouchableOpacity >
                         <Image style={styles.share} source={require('../../static/img/share.png')} />
                     </TouchableOpacity>
                 </View>
                 <ScrollView> 
-                    <View style={{flex:1,backgroundColor:"FFFFFF",height:pxToDp(1282)}}>
+                    <View style={{flex:1,backgroundColor:"FFFFFF",height:windowHeight}}>
                         <StatusBar backgroundColor="#F5F5F5" barStyle={"dark-content"} translucent={true}/>
                         {/* 测试页面文本 */}
                         {/* <Text style = {styles.textTitle}>走进红色故都瑞金,探寻共和国诞生地</Text>
@@ -133,7 +154,8 @@ export default class XiangQing extends Component{
                         source={{ html: details.text }}
                     />
                     {/* <Text style={styles.timeStyle}>{details.createAt}</Text> */}
-                                            <View style={{height:36}}></View>
+                    {/* 画面填充 */}
+                    <View style={{height:60}}></View> 
                     </View>
                 </ScrollView>
                 <View style={styles.bottomView}>
@@ -142,17 +164,19 @@ export default class XiangQing extends Component{
                             navigation.navigate('Comment',{title:this.state.details.articleTitle,id:id})}}> 
                         <Text style={styles.textInput}>发表评论</Text>
                         <Image style={styles.commentImg} source={require('../../static/img/commentImg.png')} />
-                        </TouchableOpacity>
+                    </TouchableOpacity>
                         {/* 文章点赞 */}
                         <TouchableOpacity 
-                            onPress={this.likeFun.bind(this)}>
-                        <Image style={styles.like} source={this.state.like ? images.first_like : images.second_like} />
+                            onPress={this.likeFun.bind()}
+                            style={{width:pxToDp(50),height:pxToDp(50),marginTop:pxToDp(10),}}
+                            >
+                                    <Svg style={styles.like} svgXmlData={this.state.like ? user_like_1 : user_like_2} />
                         </TouchableOpacity>
                         {/* 文章收藏 */}
                         <TouchableOpacity 
-                            onPress={()=>this.setState({ 
-                                Collection: !this.state.Collection,
-                            })}>
+                            style={{width:pxToDp(50),height:pxToDp(50),marginRight:pxToDp(56),marginTop:pxToDp(15)}}
+                            onPress={this.CollectionFun.bind()}
+                            >
                         <Image style={styles.Collection} source={this.state.Collection ? images.first_Collection : images.second_Collection} />
                         </TouchableOpacity>
 
@@ -164,10 +188,6 @@ export default class XiangQing extends Component{
 
 }
 const styles = StyleSheet.create ({
-    body:{
-    flex:1,
-    position:'relative'
-    },
     textTitle:{
         fontSize:pxToDp(32),
         marginTop:pxToDp(80),
@@ -187,16 +207,18 @@ const styles = StyleSheet.create ({
         marginRight:pxToDp(44),
     },
     bottomView:{
-        display:'flex',
         flexDirection:"row",
         justifyContent:'space-between',
         alignItems:'center',
         position:"absolute",
         width:"100%",
-        height:80,
+        height:"8%",
         left:0,
         bottom:0,
         backgroundColor:"#F5F5F5",
+        // width:pxToDp(750),
+        // height:pxToDp(100),
+        // marginTop:pxToDp(0),
         borderColor:"#E0DDDD",
         borderTopWidth: 1,
     },
@@ -217,12 +239,11 @@ const styles = StyleSheet.create ({
         marginLeft:pxToDp(360)
     },
     like:{
-        marginLeft:pxToDp(-50),
-        marginTop:pxToDp(10),
+        
     },
     Collection:{
-        marginLeft:pxToDp(-100),
-        marginTop:pxToDp(8),
+        // marginLeft:pxToDp(-100),
+        // marginTop:pxToDp(8),
     },
     tabNavigetion:{
         backgroundColor:"#F5F5F5",

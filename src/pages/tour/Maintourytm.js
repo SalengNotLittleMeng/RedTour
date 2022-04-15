@@ -83,13 +83,13 @@ export default class Maintourytm extends Component {
 // 停止拖动时文字和图片进行自动偏移
     this.onScrollEndDrag=async ()=>{
         if(this.state.temp<150){
-          await  this.state._scrollView_word.scrollTo({y:140*(this.state.bar)})
-          await  this.state._scrollView.scrollTo({y:400*(this.state.bar)})
+             this.state._scrollView_word.scrollTo({y:300*(this.state.bar)})
+             this.state._scrollView.scrollTo({y:400*(this.state.bar)})
             }
         if(this.state.temp>=150){
             this.state.bar++;
-            await  this.state._scrollView.scrollTo({y:400*(this.state.bar)});
-            await this.state._scrollView_word.scrollTo({y:140*(this.state.bar)});
+            this.state._scrollView.scrollTo({y:400*(this.state.bar)});
+            this.state._scrollView_word.scrollTo({y:300*(this.state.bar)});
             }
         }
     //文字滑动部分
@@ -101,28 +101,28 @@ export default class Maintourytm extends Component {
         // }
         //     let offset =  event.nativeEvent.contentOffset.y-this.state.init;
         //  this.state._scrollView.scrollTo({y: this.state.init+offset*2})
-        if(event.nativeEvent.contentOffset.y>=420){
+        if(event.nativeEvent.contentOffset.y>=1000){
                 this.handleshow()
             this.fadeOutAnimated.start( () => this.state.calHeight.setValue(1))
         }
-        if(event.nativeEvent.contentOffset.y<420){
+        if(event.nativeEvent.contentOffset.y<1000){
              this.fadeOutAnimated.start( () => this.state.calHeight.setValue(0))
                 this.handlehide()}
             this.state.begin = Math.floor(event.nativeEvent.contentOffset.y)
             this.state.temp = (this.state.begin)%130;
-            this.state.bar = Math.floor(this.state.begin/130);
+            this.state.bar = Math.floor(this.state.begin/300);
                     }
         }
     this._onScrollEndDrag=async ()=>{
         this.state.stopAuto = false;
         if(this.state.temp<30){
-          await  this.state._scrollView_word.scrollTo({y:140*(this.state.bar)})
+          await  this.state._scrollView_word.scrollTo({y:300*(this.state.bar)})
           await  this.state._scrollView.scrollTo({y:400*(this.state.bar)})
             }
          if(this.state.temp>=30){
             this.state.bar++;
             await  this.state._scrollView.scrollTo({y:400*(this.state.bar)});
-            await this.state._scrollView_word.scrollTo({y:140*(this.state.bar)});
+            await this.state._scrollView_word.scrollTo({y:300*(this.state.bar)});
             }
             this.state.flag = true;
             this.state.stopAuto = true;
@@ -180,7 +180,7 @@ render(){
                 <Image source={require('../../static/tour/detail/backblock.png')}
                  />
                 </View>
-            <View style={{ position: 'absolute', backgroundColor: '#1E1E1E', top: 415, width: '100%', height: '78%', opacity: 1 }}>
+            <View style={{ position: 'absolute', backgroundColor: '#1E1E1E', top: 415, width: '100%', height: '85%', opacity: 1 }}>
                 
             <View  style={styles.swiperStyle}>
                 <ScrollView  
@@ -227,8 +227,9 @@ const styles = StyleSheet.create({
     },
     swiperStyle:{
         position:'relative',
-        top:-50,
-        height:400,
+        top:-100,
+        // height:400,
+        flex:1,
 
     },
        bannerStyle:{
@@ -242,6 +243,7 @@ const styles = StyleSheet.create({
     textmain: {
         top: '0%',
         color: 'white',
+        height:180,
         fontSize: 20,
         marginLeft: 30,
         marginBottom:120,

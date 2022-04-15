@@ -62,6 +62,31 @@ const api = {
         url: '/spot/spot/queryById',
         method: 'post'
     },
+    // 推荐详情用户收藏
+    userSC: {
+        url: '/collect/instercollect',
+        method: 'post',
+    },
+    //推荐详情判断用户是否收藏
+    userItSC: {
+        url: '/collect/showstatus',
+        method: 'post',
+    },    
+    //获取评论列表
+    getComment: {
+        url: '/comment/commentsRoot/commentrecord',
+        method: 'post',
+    },
+    //用户评论点赞
+    userXH: {
+        url:'/comment/commentsRoot/commentaddlike',
+        method:'post'
+    },
+    //用户添加评论
+    insertComment: {
+        url:'/comment/commentsRoot/insertcomment',
+        method:'post'
+    },
     // 获取景点评论
     spotComment: {
         url: '/comment/commentsRoot/commentrecord',

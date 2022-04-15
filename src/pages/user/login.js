@@ -10,8 +10,6 @@ class Login extends Component {
         checked:true
     }
 }
-// 13303454658
-
 press = () => {
   this.setState({
     checked:true
@@ -23,13 +21,13 @@ press = () => {
         
         <StatusBar backgroundColor="transparent" translucent={true}/>
         <Image 
-        // style={{height:'100%'}}
-        resizeMode="contain"
+        style={{flex:1,height:'100%'}}
+        resizeMode="stretch"
         source={require('../imgc/onec.png')}>
         </Image>
         <Text style={{position:'absolute' ,marginTop:'30%'}}> 
             <Text style={LoginStyles.login}>
-                     红侣 </Text>  
+                     红 侣 </Text>  
         </Text> 
 
         <Text style={{position:'absolute',marginTop:600,color:'white'}}>
@@ -65,9 +63,7 @@ press = () => {
 const LoginStyles = StyleSheet.create({   
   login:{
     fontSize:50 , 
-    // textAlign: 'center',
-    // textAlignVertical: 'center',
-    // position:'absolute',
+    fontFamily: '华文新魏',
     color:'#DE2910'
   }
 });

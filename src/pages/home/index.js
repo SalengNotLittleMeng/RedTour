@@ -1,7 +1,7 @@
 import { black } from 'chalk';
 import React, { Component } from 'react';
 import { View,Text,Image,StatusBar,
-        TextInput,ScrollableTabView,StyleSheet,TouchableOpacity,ScrollView,FlatList
+        TextInput,ScrollableTabView,StyleSheet,TouchableOpacity,ScrollView,FlatList, Alert
     } from 'react-native';
 import { pxToDp } from '../../utils/pxToDp';
 import TabBar from './TabNavigation';
@@ -25,7 +25,10 @@ export default class TuiJianQzn extends Component {
             type:0,
             //推荐数组
             recomments:[],
-            isLoadding:false,            
+            isLoadding:false,
+            //视频参数
+            recommentPaused: true,//推荐栏 视频暂停 true暂停，false播放
+            videoPaused:true,//视频栏 视频暂停
         };
     }
 
@@ -38,10 +41,10 @@ export default class TuiJianQzn extends Component {
     dataFormSon(index){
         // this.state.type=index
         this.setState({type:index})
-        this.getRecomment();
+        this.getRecomment(true);
         // this.setState({type:index})
-        console.log("type:%d",this.state.type) 
-        console.log(typeof this.state.type)
+        // console.log("type:%d",this.state.type) 
+        // console.log(typeof this.state.type)
     }
     //获取推荐导航栏
     getRecommentTab= async ()=>{
@@ -54,13 +57,20 @@ export default class TuiJianQzn extends Component {
         
     }
     //获取推荐首页
-    getRecomment= async ()=>{
+    getRecomment= async (isNew=false,i=5)=>{
         axios.post("http://49.233.252.20:8085/user/content/push",{pageNum:this.state.pageNum,type:this.state.type+1}).then(res=>{
             console.log(res.data.data) 
-            this.setState({ recomments:[...this.state.recomments,...res.data.data]});
+            if(isNew){
+                this.setState({ recomments:res.data.data})
+            }else{
+                this.setState({ recomments:[...this.state.recomments,...res.data.data]});
+            }
+            if(res.data.data==undefined&&i>0){
+                this.getRecomment(true,--i)
+                console.log(i)
+            }
         })
         this.state.isLoadding=false;
-        
     }
         //滚顶条触底事件
         onEndReached=()=>{
@@ -75,9 +85,21 @@ export default class TuiJianQzn extends Component {
                 this.getRecomment();
             }
         }
+        //推荐页视频暂停函数
+        onRecommentPaused(){
+            this.setState({
+                recommentPaused: !this.state.recommentPaused
+            })
+        }
+        //视频页视频暂停函数
+        onVideoPaused(index){
+            this.state.recomments[index].videoPaused = !this.state.recomments[index].videoPaused
+        }
+
     render() {
         const  {navigation} = this.props
         const {recomments} = this.state
+         this.getRecomment();
         return(
                     <View style={{position:"absolute",width:"100%",height:"8%",top:0,left:0}}>
                     {/* 状态栏  */}
@@ -100,7 +122,6 @@ export default class TuiJianQzn extends Component {
                         </View>
                         </TouchableOpacity>
                     {/* 个人中心 */}
-
                         <TouchableOpacity onPress={()=>{
                          this.props.navigation.navigate('Pone');}}>
                                 <View>
@@ -125,28 +146,155 @@ export default class TuiJianQzn extends Component {
                                 onEndReached={this.onEndReached}
                                 onEndReachedThreshold={0.1}
                                 data={recomments}
-                                keyExtractor={item => item.id}
+                                keyExtractor={item => item.id+""}
                                 renderItem={({item,index})=>
                                 <>
                                 <TouchableOpacity onPress={()=>{
                                     navigation.navigate('Details',{id:this.state.recomments[index].id})}} 
                                 >
                                     {/* 热榜 */}
-                                    {this.state.type===0 && <View>{RecommendedContent(item,index) }</View>}
+                                    {this.state.type===0 && <View>
+                                        {item.videoId ==null ?
+                                        <View key={index} style={{height:pxToDp(362),backgroundColor:"#FFFFFF",marginTop:pxToDp(34),borderRadius:10}}>
+                                            <Text style={{fontSize:pxToDp(32),marginLeft:pxToDp(30),marginTop:pxToDp(32)}}>{item.articleTitle}</Text>
+                                            <Image style={{width:pxToDp(286),height:pxToDp(191),marginLeft:pxToDp(34),marginTop:pxToDp(34)}} source={{uri:item.url}} />
+                                            <Text numberOfLines={6} ellipsizeMode="tail" style={{fontSize:pxToDp(28),marginTop:pxToDp(-232),marginLeft:pxToDp(356),marginRight:pxToDp(32)}}>        {item.articleIntroduce} </Text>
+                                                <View  style={{flexDirection:"row", position: 'absolute',}}>
+                                                                            
+                                                    <View>
+                                                        <Image style={{width:pxToDp(24),height:pxToDp(24),marginLeft:pxToDp(58),marginTop:pxToDp(320)}} source={require('../../static/img/dingWei.png')} />
+                                                        <Text style={{fontSize:pxToDp(20),marginLeft:pxToDp(92),marginTop:pxToDp(-24)}}>{item.articleLocation}</Text>
+                                                    </View>
+                                                    <View style={{flexDirection:"row"}}>
+                                                        <Text style={{fontSize:pxToDp(20),marginLeft:pxToDp(58),marginTop:pxToDp(320),marginLeft:pxToDp(400)}}>{item.views}浏览</Text>
+                                                        <Text style={{fontSize:pxToDp(20),marginTop:pxToDp(320),marginLeft:pxToDp(10)}}>{item.commentNum}评论</Text>
+                                                    </View>
+                                                </View>
+                                        </View>
+                                    :
+                                        <View key={index} style={{backgroundColor:"#FFFFFF",height:pxToDp(674),width:pxToDp(750),marginTop:pxToDp(34),borderRadius:10}} >
+                                            <Text style={{fontSize:pxToDp(32),marginLeft:pxToDp(30),marginTop:pxToDp(32)}}>{item.articleTitle}</Text>
+                                            <View >
+                                                {/* video开始 */}
+                                            <TouchableOpacity onPress={()=>{
+                                                this.onRecommentPaused()
+                                                
+                                            }}
+                                                            >
+                                                {this.state.recommentPaused==false ?
+                                                
+                                                <Video
+                                                    // ref={(ref: Video) => { //方法对引用Video元素的ref引用进行操作
+                                                    //     this.video = ref
+                                                    // }}
+                                                    style={styles.video}
+                                                    source={{uri:item.videoUrl}}
+                                                    rate={1.0}//播放速率 
+                                                    paused={this.state.recommentPaused}//暂停 
+                                                    volume={1.0}//调节音量
+                                                    muted={false}//控制音频是否静音
+                                                    resizeMode={'contain'}//缩放模式
+                                                    // onLoad={this.onLoad}//加载媒体并准备播放时调用的回调函数。
+                                                    // onProgress={this.onProgress}//视频播放过程中每个间隔进度单位调用的回调函数
+                                                    // onEnd={this.onEnd}//视频播放结束时的回调函数
+                                                    // onAudioBecomingNoisy={this.onAudioBecomingNoisy}//音频变得嘈杂时的回调 - 应暂停视频
+                                                    // onAudioFocusChanged={this.onAudioFocusChanged}//音频焦点丢失时的回调 - 如果焦点丢失则暂停
+                                                    // repeat={false}//确定在到达结尾时是否重复播放视频。
+                                                />
+                                                :
+                                                <View style={{
+                                                    width:pxToDp(700),
+                                                    height:pxToDp(450),
+                                                    marginLeft:pxToDp(22),
+                                                    marginTop:pxToDp(17),
+                                                    backgroundColor:"black"}}></View>
+                                                }
+                                                {/* video结束 */}
+                                                </TouchableOpacity>
+                                            </View>
+                                            <Text numberOfLines={2} ellipsizeMode="tail" style={{fontSize:pxToDp(28),marginTop:pxToDp(0),marginLeft:pxToDp(56),marginRight:pxToDp(56)}}>        {item.videoIntroduce} </Text>
+                                            <View  style={{flexDirection:"row", position: 'absolute',}}>
+                                                <View>
+                                                    <Image style={{width:pxToDp(24),height:pxToDp(24),marginLeft:pxToDp(58),marginTop:pxToDp(622)}} source={require('../../static/img/dingWei.png')} />
+                                                    <Text style={{fontSize:pxToDp(20),marginLeft:pxToDp(92),marginTop:pxToDp(-24)}}>{item.articleLocation}</Text>
+                                                </View>
+                                                <View style={{flexDirection:"row"}}>
+                                                    <Text style={{fontSize:pxToDp(20),marginLeft:pxToDp(58),marginTop:pxToDp(622),marginLeft:pxToDp(400)}}>{item.views}浏览</Text>
+                                                    <Text style={{fontSize:pxToDp(20),marginTop:pxToDp(622),marginLeft:pxToDp(10)}}>{item.commentNum}评论</Text>
+                                                </View>
+                                            </View>
+                                        </View>
+                                    }
+                                    </View>}
 
                                     {/* 高赞 */}
                                     {this.state.type===1 && <View>{RecommendedContent(item,index) }</View>}
 
                                     {/* 图文 */}
-                                    {this.state.type===2 && <View>{TUWen(item,index) }</View>}
+                                    {this.state.type===2 && <View>{RecommendedContent(item,index) }</View>}
 
                                     {/* 视频 */}
-                                    {this.state.type===3 && <View>{Video_(item,index) }</View>}
-                                    
+                                    {this.state.type===3 && <View>
+                                        <View style={{backgroundColor:"#FFFFFF",height:pxToDp(674),width:pxToDp(750),marginTop:pxToDp(34),borderRadius:10}} >
+                                            <Text style={{fontSize:pxToDp(32),marginLeft:pxToDp(30),marginTop:pxToDp(32)}}>{item.articleTitle}</Text>
+                                            <View >
+                                                {/* video开始 */}
+                                            <TouchableOpacity onPress={()=>{
+                                                this.onVideoPaused(index)
+                                                
+                                            }}
+                                                            >
+                                                {this.state.videoPaused==false ?
+                                                
+                                                <Video
+                                                    // ref={(ref: Video) => { //方法对引用Video元素的ref引用进行操作
+                                                    //     this.video = ref
+                                                    // }}
+                                                    style={styles.video}
+                                                    source={{uri:item.videoUrl}}
+                                                    rate={1.0}//播放速率 
+                                                    paused={this.state.videoPaused}//暂停 
+                                                    volume={1.0}//调节音量
+                                                    muted={false}//控制音频是否静音
+                                                    resizeMode={'contain'}//缩放模式
+                                                    // onLoad={this.onLoad}//加载媒体并准备播放时调用的回调函数。
+                                                    // onProgress={this.onProgress}//视频播放过程中每个间隔进度单位调用的回调函数
+                                                    // onEnd={this.onEnd}//视频播放结束时的回调函数
+                                                    // onAudioBecomingNoisy={this.onAudioBecomingNoisy}//音频变得嘈杂时的回调 - 应暂停视频
+                                                    // onAudioFocusChanged={this.onAudioFocusChanged}//音频焦点丢失时的回调 - 如果焦点丢失则暂停
+                                                    // repeat={false}//确定在到达结尾时是否重复播放视频。
+                                                />
+                                                :
+                                                <View style={{
+                                                    width:pxToDp(700),
+                                                    height:pxToDp(450),
+                                                    marginLeft:pxToDp(22),
+                                                    marginTop:pxToDp(17),
+                                                    backgroundColor:"black"}}></View>
+                                                }
+                                                {/* video结束 */}
+                                                </TouchableOpacity>
+                                            </View>
+                                            <Text numberOfLines={2} ellipsizeMode="tail" style={{fontSize:pxToDp(28),marginTop:pxToDp(0),marginLeft:pxToDp(56),marginRight:pxToDp(56)}}>        {item.videoIntroduce} </Text>
+                                            <View  style={{flexDirection:"row", position: 'absolute',}}>
+                                                <View>
+                                                    <Image style={{width:pxToDp(24),height:pxToDp(24),marginLeft:pxToDp(58),marginTop:pxToDp(622)}} source={require('../../static/img/dingWei.png')} />
+                                                    <Text style={{fontSize:pxToDp(20),marginLeft:pxToDp(92),marginTop:pxToDp(-24)}}>{item.articleLocation}</Text>
+                                                </View>
+                                                <View style={{flexDirection:"row"}}>
+                                                    <Text style={{fontSize:pxToDp(20),marginLeft:pxToDp(58),marginTop:pxToDp(622),marginLeft:pxToDp(400)}}>{item.views}浏览</Text>
+                                                    <Text style={{fontSize:pxToDp(20),marginTop:pxToDp(622),marginLeft:pxToDp(10)}}>{item.commentNum}评论</Text>
+                                                </View>
+                                            </View>
+                                        </View>
+                                        </View>}
+
                                     {/* 美食 */}
                                     {this.state.type===4 && <View>{RecommendedContent(item,index) }</View>}
+                                    {/* 旅游 */}
+                                    {this.state.type===5 && <View>{RecommendedContent(item,index) }</View>}
 
-                                </TouchableOpacity>                                                           
+                                </TouchableOpacity>  
 
                                     {item==null?<View><Text>没有更多了</Text></View>:<></> }
                                 </>}
@@ -158,7 +306,8 @@ export default class TuiJianQzn extends Component {
         );
     }
 }
-function RecommendedContent(item,index) {
+// const _this=this
+RecommendedContent=(item,index,state,that)=> {
     if(item.id!=null){
         return(
             <View key={index} style={{height:pxToDp(362),backgroundColor:"#FFFFFF",marginTop:pxToDp(34),borderRadius:10}}>
@@ -182,8 +331,24 @@ function RecommendedContent(item,index) {
         return(
             <View key={index} style={{backgroundColor:"#FFFFFF",height:pxToDp(674),width:pxToDp(750),marginTop:pxToDp(34),borderRadius:10}} >
                 <Text style={{fontSize:pxToDp(32),marginLeft:pxToDp(30),marginTop:pxToDp(32)}}>{item.articleTitle}</Text>
-                <View style={styles.video}></View>
-                <Text numberOfLines={2} ellipsizeMode="tail" style={{fontSize:pxToDp(28),marginTop:pxToDp(48),marginLeft:pxToDp(56),marginRight:pxToDp(56)}}>        {item.videoIntroduce} </Text>
+                <View >
+                    {/* video开始 */}
+                <TouchableOpacity onPress={()=>{
+                    console.log("视频成功播放")
+                    // console.log(that) 
+                }}
+                >
+                    <View style={{
+                        width:pxToDp(700),
+                        height:pxToDp(450),
+                        marginLeft:pxToDp(22),
+                        marginTop:pxToDp(17),
+                        backgroundColor:"black"}}></View>
+                    
+                    {/* video结束 */}
+                    </TouchableOpacity>
+                </View>
+                <Text numberOfLines={2} ellipsizeMode="tail" style={{fontSize:pxToDp(28),marginTop:pxToDp(0),marginLeft:pxToDp(56),marginRight:pxToDp(56)}}>        {item.videoIntroduce} </Text>
                 <View  style={{flexDirection:"row", position: 'absolute',}}>
                     <View>
                         <Image style={{width:pxToDp(24),height:pxToDp(24),marginLeft:pxToDp(58),marginTop:pxToDp(622)}} source={require('../../static/img/dingWei.png')} />
@@ -220,29 +385,6 @@ function TUWen(item,index) {
             </View>
         )
     }}
-
-    function Video_(item,index) {
-        if(item.videoId!=null){
-            return(
-                <View key={index} style={{backgroundColor:"#FFFFFF",height:pxToDp(674),width:pxToDp(750),marginTop:pxToDp(34),borderRadius:10}} >
-                    <Text style={{fontSize:pxToDp(32),marginLeft:pxToDp(30),marginTop:pxToDp(32)}}>{item.articleTitle}</Text>
-                    <View style={styles.video}></View>
-                    <Text numberOfLines={2} ellipsizeMode="tail" style={{fontSize:pxToDp(28),marginTop:pxToDp(48),marginLeft:pxToDp(56),marginRight:pxToDp(56)}}>        {item.videoIntroduce} </Text>
-                    <View  style={{flexDirection:"row", position: 'absolute',}}>
-                        <View>
-                            <Image style={{width:pxToDp(24),height:pxToDp(24),marginLeft:pxToDp(58),marginTop:pxToDp(622)}} source={require('../../static/img/dingWei.png')} />
-                            <Text style={{fontSize:pxToDp(20),marginLeft:pxToDp(92),marginTop:pxToDp(-24)}}>{item.articleLocation}</Text>
-                        </View>
-                        <View style={{flexDirection:"row"}}>
-                            <Text style={{fontSize:pxToDp(20),marginLeft:pxToDp(58),marginTop:pxToDp(622),marginLeft:pxToDp(400)}}>{item.views}浏览</Text>
-                            <Text style={{fontSize:pxToDp(20),marginTop:pxToDp(622),marginLeft:pxToDp(10)}}>{item.commentNum}评论</Text>
-                        </View>
-                    </View>
-                </View>
-            )
-        }
-    }
-    
 
 const styles = StyleSheet.create ({
     personal:{
@@ -285,10 +427,12 @@ const styles = StyleSheet.create ({
         color:"#333333"
     },
     video:{
-        width:pxToDp(667),
-        height:pxToDp(383),
-        marginLeft:pxToDp(44),
-        marginTop:pxToDp(34),
-        backgroundColor:"black"
+        width:pxToDp(700),
+        height:pxToDp(450),
+        marginLeft:pxToDp(22),
+        marginTop:pxToDp(17),
+        // backgroundColor:"red"
     }
 });
+
+

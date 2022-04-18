@@ -1,5 +1,6 @@
 
-import React, { useState, useRef,Component } from "react";
+import React, { useState, Component } from "react";
+import Pubsub from 'pubsub-js'
 import Audio from './Audio';
 import {
     TouchableOpacity,
@@ -14,6 +15,7 @@ import {
     View,
 } from 'react-native';
 import {inject,observer,action} from 'mobx-react'
+import RootStore from '../../mobx/index';
 @inject('RootStore')
 @observer
 export default class Maintourytm extends Component {
@@ -21,11 +23,7 @@ export default class Maintourytm extends Component {
     super(props);
     this.state = {
         msg:[
-        {id:1,coverUrl:'../../static/tour/detail/buttom.png',description:'想握住此生辽阔 赠你满天星火'},
-        {id:2,coverUrl:'../../static/tour/detail/top.png',description:'是落日弥漫的橘，天边透亮的星。'},
-        {id:3,coverUrl:'../../static/tour/detail/center.png',description:'想握住此生辽阔 赠你满天星火'},
-        {id:4,coverUrl:'../../static/tour/detail/four.png',description:'是落日弥漫的橘，天边透亮的星。'},
-        {id:5,coverUrl:'../../static/tour/detail/five.png',description:'想握住此生辽阔 赠你满天星火'}
+        {id:1,coverUrl:'',description:'正在玩命加载中'},
         ],
          _scrollView: ScrollView | null | undefined,
           _scrollView_word: ScrollView | null | undefined,
@@ -36,6 +34,7 @@ export default class Maintourytm extends Component {
         flag:true,
         stopAuto:true,
         isshow:false,
+        curIndex:0,
         calHeight: new Animated.Value(0),
     };
         this.pan=PanResponder.create({
@@ -49,13 +48,13 @@ export default class Maintourytm extends Component {
         onMoveShouldSetPanResponder: (evt, gestureState) => true,
         onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
         onPanResponderRelease: (evt, gestureState) => {
-        if(gestureState.dx>40){
-            this.props.navigation.navigate('TourMessage');
+        if(gestureState.dx>50){
+            this.props.navigation.navigate('TourMessage',{id:this.state.msg[this.state.curIndex].id})
             }
-        //    if(gestureState.dx<-40){
-        //     this.props.RootStore.globalStore.setPlaying();
-        //     console.log(this.props.RootStore.globalStore.isPlaying)
-        //     }
+           if(gestureState.dx<-50){
+             Pubsub.publish('changePlay',true)
+            RootStore.globalStore.setPlaying(false)
+            }
         }
     })
     this.fadeOutAnimated = Animated.timing(
@@ -81,7 +80,7 @@ export default class Maintourytm extends Component {
             this.state.bar = Math.floor(this.state.begin/400);
     }
 // 停止拖动时文字和图片进行自动偏移
-    this.onScrollEndDrag=async ()=>{
+    this.onScrollEndDrag=()=>{
         if(this.state.temp<150){
              this.state._scrollView_word.scrollTo({y:300*(this.state.bar)})
              this.state._scrollView.scrollTo({y:400*(this.state.bar)})
@@ -95,12 +94,6 @@ export default class Maintourytm extends Component {
     //文字滑动部分
     this._handleScroll=(event)=>{
        if(this.state.stopAuto){
-        // if(this.state.flag){
-        //     this.state.init =this.state.bar*400;
-        //     this.state.flag = false;
-        // }
-        //     let offset =  event.nativeEvent.contentOffset.y-this.state.init;
-        //  this.state._scrollView.scrollTo({y: this.state.init+offset*2})
         if(event.nativeEvent.contentOffset.y>=1000){
                 this.handleshow()
             this.fadeOutAnimated.start( () => this.state.calHeight.setValue(1))
@@ -156,16 +149,20 @@ render(){
       let cover = this.state.msg.map((item, index) => 
             <TouchableWithoutFeedback {...this.pan.panHandlers}
                      key={index} onPress={
-                        ()=> this.props.navigation.navigate('TourMessage',{id:this.state.msg[index].id})}>
+                        ()=>{this.state.curIndex=index 
+                        this.props.navigation
+                        .navigate('TourMessage'
+                        ,{id:this.state.msg[index].id})}}>
                 <Image  source={{uri:item.coverUrl}} style={styles.bannerStyle}/>
             </TouchableWithoutFeedback>)
     return (
-        <View>
+        <View style={[styles.outer]} >
             <StatusBar backgroundColor="transparent" translucent={true}></StatusBar>
             <View  style={{ backgroundColor: '#1E1E1E',width: '100%', height: 48, zIndex: 10 }}>
                 <Text style={[styles.toptitle]}>旅游模式</Text>
             </View>  
-            <View style={styles.container}>
+            <View style={styles.container}
+            >
                     <ScrollView  
                         scrollEnabled={false}
                         snapToInterval={400}
@@ -180,7 +177,9 @@ render(){
                 <Image source={require('../../static/tour/detail/backblock.png')}
                  />
                 </View>
-            <View style={{ position: 'absolute', backgroundColor: '#1E1E1E', top: 415, width: '100%', height: '85%', opacity: 1 }}>
+            <View style={{ position: 'absolute', backgroundColor: '#1E1E1E', top: 415, width: '100%', height: '85%', opacity: 1 }}
+            {...this._panResponder.panHandlers}
+            >
                 
             <View  style={styles.swiperStyle}>
                 <ScrollView  
@@ -189,31 +188,32 @@ render(){
                     onScroll={this._handleScroll}
                     onScrollEndDrag = {()=>this._onScrollEndDrag()}
                 >
-                    <View style={{position:'relative'}} {...this._panResponder.panHandlers}>
+                    <View style={{position:'relative'}}>
                         {DOM}
                        <View style = {styles.buttomBlock}></View>
                     </View>
                 </ScrollView>
-                     <Animated.View style = {[styles.buttomBox,{opacity:this.state.calHeight}]} >
-                            <View style={{display:this.state.isshow?'flex':'none'}}>
-                            <TouchableOpacity onPress={this.scollTop}>
-                                <Image style={[styles.buttom_icon]} 
+            </View>
+            </View>
+                    <Animated.View 
+                style = {[styles.buttomBox,{opacity:this.state.calHeight}]} >
+                    <View style={{display:this.state.isshow?'flex':'none'}}>
+                    <TouchableOpacity onPress={this.scollTop}>
+                        <Image style={[styles.buttom_icon]} 
+                        resizeMethod="scale"
+                        source={require('../../static/tour/detail/flash.png')} />
+                        </TouchableOpacity>
+                        <Text style={{position:'absolute',top:60,left:55, fontSize:20,color:'white'}}>返回</Text>
+                    </View >
+                        <View style={{display:this.state.isshow?'flex':'none'}}>
+                        <TouchableOpacity onPress={this.getMore}>
+                            <Image style={[styles.buttom_icon]} 
                                 resizeMethod="scale"
-                                source={require('../../static/tour/detail/flash.png')} />
-                             </TouchableOpacity>
-                                <Text style={{position:'absolute',top:60,left:55, fontSize:20,color:'white'}}>返回</Text>
-                            </View >
-                               <View style={{display:this.state.isshow?'flex':'none'}}>
-                                <TouchableOpacity onPress={this.getMore}>
-                                    <Image style={[styles.buttom_icon]} 
-                                        resizeMethod="scale"
-                                        source={require('../../static/tour/detail/more.png')} />
-                                </TouchableOpacity>
-                                    <Text  style={{position:'absolute',top:60,left:55, fontSize:20,color:'white'}}>更多</Text>
-                                </View>
-                        </Animated.View>
-            </View>
-            </View>
+                                source={require('../../static/tour/detail/more.png')} />
+                        </TouchableOpacity>
+                            <Text  style={{position:'absolute',top:60,left:55, fontSize:20,color:'white'}}>更多</Text>
+                        </View>
+                </Animated.View>
         <Audio></Audio>
         </View>
 
@@ -222,13 +222,14 @@ render(){
 
 }
 const styles = StyleSheet.create({  
+
+body:{ backgroundColor:'#1E1E1E'},
    container: {
-        height:400
+        height:'70%',
     },
     swiperStyle:{
         position:'relative',
         top:-100,
-        // height:400,
         flex:1,
 
     },
@@ -252,7 +253,7 @@ const styles = StyleSheet.create({
     blockground: { position:'absolute', top:5,height:300,opacity: 0.9},
     buttomBox:{
         position:'absolute',
-        top:220,
+        bottom:-250,
         display:'flex',
         flexDirection:'row',
         alignSelf:'center',

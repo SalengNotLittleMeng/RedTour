@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Keyboard,
 } from 'react-native';
+import Pubsub from 'pubsub-js'
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {pxToDp} from '../utils/pxToDp';
 import RootStore from '../mobx/index';
@@ -139,15 +140,17 @@ function tabIcon(isFocused, index) {
   if (index === 1) {
     return (
     <TouchableOpacity onPress={()=>{
-            console.log(RootStore.globalStore.isPlaying)
-            RootStore.globalStore.setPlaying()
-}}>
-    <View onStartShouldSetResponderCapture={(ev) => false}
+           Pubsub.publish('changePlay',RootStore.globalStore.isPlaying)
+          RootStore.globalStore.setPlaying()
+}}
+onStartShouldSetResponderCapture={(ev) => true}
+>
+    <View 
+        style={{marginBottom:pxToDp(180)}}
     >
       <Image
         source={require('../assets/icons/playing.png')}
         style={{
-          marginBottom: pxToDp(180),
           width: pxToDp(218),
           height: pxToDp(218),
           borderTopWidth:pxToDp(140)

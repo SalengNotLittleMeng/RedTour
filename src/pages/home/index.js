@@ -95,11 +95,15 @@ export default class TuiJianQzn extends Component {
         onVideoPaused(index){
             this.state.recomments[index].videoPaused = !this.state.recomments[index].videoPaused
         }
-
+    flag=true
     render() {
+        if(this.flag){
+        this.getRecomment();
+        this.getRecommentTab();
+        this.flag=false
+        }
         const  {navigation} = this.props
         const {recomments} = this.state
-         this.getRecomment();
         return(
                     <View style={{position:"absolute",width:"100%",height:"8%",top:0,left:0}}>
                     {/* 状态栏  */}

@@ -60,8 +60,8 @@ class GlobalStore {
     @action setSearch(search) {
         this.allData.search = search;
     }
-    @action setPlaying() {
-        this.isPlaying = !this.isPlaying;
+    @action setPlaying(flag) {
+        this.isPlaying = flag===undefined?!this.isPlaying:flag
     }
 }
 

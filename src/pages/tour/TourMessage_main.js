@@ -12,11 +12,11 @@ export default class TourMessage_main extends Component {
     super(props);
     this.state = {
         msg:{
-        imges: [require('../../static/tour/detail/buttom.png'),require('../../static/tour/detail/top.png'),require('../../static/tour/detail/four.png')],
-        introduct: "榆次老城即榆次古县城，也叫子母城，由北部的县城和南部的郭城两部分组成，县城为母城，郭城为子城。母城与子城相连构成了酷似鲤鱼的榆次城，头南尾北，母城为鱼腹，子城为鱼头，南、北大街为鱼脊。",
-        location: "太原市阳曲县华强中路1号",
-        name: "太原方特东方神话",
-        score: 4.7,
+        imges: [],
+        introduct: "加载中",
+        location: "加载中",
+        name: "加载中",
+        score: 0.0,
         unOnline:true
         }
     };

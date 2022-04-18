@@ -23,6 +23,7 @@
         "mobx": "^6.1.4",
         "mobx-react": "^7.1.0",
         "prop-types": "^15.7.2",
+        "pubsub-js": "^1.9.4",
         "react": "16.13.1",
         "react-native": "0.63.4",
         "react-native-amap3d": "^3.0.7",
